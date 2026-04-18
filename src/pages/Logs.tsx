@@ -10,10 +10,12 @@ export function Logs() {
   const { syncHistory } = useSyncStore()
   const { integrations } = useIntegrationStore()
 
-  // Merge all events across integrations, sort newest first
   const allEvents: SyncEvent[] = Object.values(syncHistory)
     .flat()
-    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+    .sort(
+      (a, b) =>
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+    )
 
   const getIntegration = (integrationId: string) =>
     integrations.find((i) => i.id === integrationId)
@@ -41,7 +43,8 @@ export function Logs() {
       ) : (
         <div className="bg-surface-container-lowest rounded-2xl p-6 ambient-shadow">
           <p className="font-body text-sm text-on-surface-variant mb-6">
-            {allEvents.length} sync event{allEvents.length !== 1 ? "s" : ""} recorded
+            {allEvents.length} sync event{allEvents.length !== 1 ? "s" : ""}{" "}
+            recorded
           </p>
 
           <div className="relative">
@@ -68,7 +71,9 @@ export function Logs() {
                         {/* Integration label */}
                         <div className="flex items-center gap-1.5">
                           {integration?.icon && (
-                            <span className="text-base leading-none">{integration.icon}</span>
+                            <span className="text-base leading-none">
+                              {integration.icon}
+                            </span>
                           )}
                           <span className="font-label text-sm font-bold text-on-surface">
                             {event.application_name}
@@ -90,7 +95,9 @@ export function Logs() {
                         <span className="material-symbols-outlined text-[15px] text-on-surface-variant">
                           change_circle
                         </span>
-                        <span className="font-label text-xs text-on-surface-variant">Changes:</span>
+                        <span className="font-label text-xs text-on-surface-variant">
+                          Changes:
+                        </span>
                         <span className="font-label text-sm font-bold text-on-surface">
                           {event.changes_applied}
                         </span>
@@ -99,7 +106,9 @@ export function Logs() {
                         <span className="material-symbols-outlined text-[15px] text-on-surface-variant">
                           warning
                         </span>
-                        <span className="font-label text-xs text-on-surface-variant">Conflicts:</span>
+                        <span className="font-label text-xs text-on-surface-variant">
+                          Conflicts:
+                        </span>
                         <span className="font-label text-sm font-bold text-on-surface">
                           {event.conflicts_resolved}
                         </span>
@@ -109,7 +118,9 @@ export function Logs() {
                           <span className="material-symbols-outlined text-[15px] text-on-surface-variant">
                             person
                           </span>
-                          <span className="font-label text-xs text-on-surface-variant">{event.user}</span>
+                          <span className="font-label text-xs text-on-surface-variant">
+                            {event.user}
+                          </span>
                         </div>
                       )}
                     </div>

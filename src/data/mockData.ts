@@ -1,6 +1,5 @@
 import type { Integration } from "../types"
 
-// Mock Integrations
 export const mockIntegrations: Integration[] = [
   {
     id: "int-1",

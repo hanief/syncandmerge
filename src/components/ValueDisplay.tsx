@@ -9,7 +9,13 @@ export interface ValueDisplayProps {
   customValue?: SyncChangeResolution["custom_value"]
 }
 
-export function ValueDisplay({ changeType, resolution, currentValue, newValue, customValue }: ValueDisplayProps) {
+export function ValueDisplay({
+  changeType,
+  resolution,
+  currentValue,
+  newValue,
+  customValue,
+}: ValueDisplayProps) {
   if (changeType === "ADD") {
     if (resolution === "accept_new") {
       return (
@@ -54,7 +60,6 @@ export function ValueDisplay({ changeType, resolution, currentValue, newValue, c
     )
   }
 
-  // UPDATE
   if (resolution === "custom" && customValue !== undefined) {
     return (
       <div className="bg-tertiary-fixed rounded-lg p-2.5">
@@ -79,7 +84,9 @@ export function ValueDisplay({ changeType, resolution, currentValue, newValue, c
       >
         <p
           className={`font-label text-[10px] font-semibold uppercase tracking-wide mb-1 ${
-            resolution === "keep_current" ? "text-on-tertiary-container" : "text-on-surface-variant"
+            resolution === "keep_current"
+              ? "text-on-tertiary-container"
+              : "text-on-surface-variant"
           }`}
         >
           Local value{resolution === "keep_current" ? " — kept" : ""}
@@ -103,14 +110,18 @@ export function ValueDisplay({ changeType, resolution, currentValue, newValue, c
       >
         <p
           className={`font-label text-[10px] font-semibold uppercase tracking-wide mb-1 ${
-            resolution === "accept_new" ? "text-[#1e6041]" : "text-on-surface-variant"
+            resolution === "accept_new"
+              ? "text-[#1e6041]"
+              : "text-on-surface-variant"
           }`}
         >
           External value{resolution === "accept_new" ? " — accepted" : ""}
         </p>
         <p
           className={`font-body text-xs wrap-break-word ${
-            resolution === "accept_new" ? "text-[#1e6041] font-medium" : "text-on-surface"
+            resolution === "accept_new"
+              ? "text-[#1e6041] font-medium"
+              : "text-on-surface"
           }`}
         >
           {renderSyncValue(newValue)}

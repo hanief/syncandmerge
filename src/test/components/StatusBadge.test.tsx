@@ -1,33 +1,31 @@
-import { describe, it, expect } from 'vitest'
-import { render, screen } from '@testing-library/react'
-import { StatusBadge } from '../../components/StatusBadge'
+import { describe, it, expect } from "vitest"
+import { render, screen } from "@testing-library/react"
+import { StatusBadge } from "../../components/StatusBadge"
 
-// framer-motion can run in test env; no mock needed
-
-describe('StatusBadge', () => {
+describe("StatusBadge", () => {
   it.each([
-    ['synced', 'Synced'],
-    ['conflict', 'Conflict'],
-    ['syncing', 'Syncing'],
-    ['error', 'Error'],
-    ['not_synced', 'Not Synced'],
+    ["synced", "Synced"],
+    ["conflict", "Conflict"],
+    ["syncing", "Syncing"],
+    ["error", "Error"],
+    ["not_synced", "Not Synced"],
   ])('renders "%s" label for status "%s"', (status, expectedLabel) => {
     render(<StatusBadge status={status} />)
     expect(screen.getByText(expectedLabel)).toBeInTheDocument()
   })
 
-  it('renders count when provided and > 0', () => {
+  it("renders count when provided and > 0", () => {
     render(<StatusBadge status="conflict" count={3} />)
-    expect(screen.getByText('(3)')).toBeInTheDocument()
+    expect(screen.getByText("(3)")).toBeInTheDocument()
   })
 
-  it('does not render count when count is 0', () => {
+  it("does not render count when count is 0", () => {
     render(<StatusBadge status="synced" count={0} />)
-    expect(screen.queryByText('(0)')).not.toBeInTheDocument()
+    expect(screen.queryByText("(0)")).not.toBeInTheDocument()
   })
 
-  it('renders the raw status string for an unknown status', () => {
+  it("renders the raw status string for an unknown status", () => {
     render(<StatusBadge status="custom_status" />)
-    expect(screen.getByText('custom_status')).toBeInTheDocument()
+    expect(screen.getByText("custom_status")).toBeInTheDocument()
   })
 })

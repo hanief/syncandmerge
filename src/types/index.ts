@@ -1,4 +1,3 @@
-// Integration Types
 export type IntegrationStatus =
   | "synced"
   | "syncing"
@@ -27,11 +26,18 @@ export interface Integration {
   pending_changes?: number
 }
 
-// Sync Change Types
 export type ChangeType = "ADD" | "UPDATE" | "DELETE"
 
-export interface SyncValueObject { [key: string]: SyncValue }
-export type SyncValue = string | number | boolean | null | SyncValueObject | SyncValue[]
+export interface SyncValueObject {
+  [key: string]: SyncValue
+}
+export type SyncValue =
+  | string
+  | number
+  | boolean
+  | null
+  | SyncValueObject
+  | SyncValue[]
 
 export interface SyncChange {
   id: string
@@ -51,7 +57,6 @@ export interface SyncApproval {
   changes: SyncChange[]
 }
 
-// API Response Types
 export interface ApiResponse<T> {
   code: string
   message: string
@@ -63,9 +68,6 @@ export interface SyncApiResponse {
   metadata: Record<string, string | number | boolean>
 }
 
-// Sync History Types
-
-/** Audit record of a single field-level resolution decision */
 export interface SyncChangeResolution {
   field_name: string
   change_type: ChangeType
@@ -87,15 +89,12 @@ export interface SyncEvent {
   version: number
   user?: string
   details?: string
-  /** Field-level resolution audit trail, present when conflicts were resolved */
   resolutions?: SyncChangeResolution[]
 }
 
-// Error Types
 export interface ApiError {
   status: number
   message: string
   type: "client_error" | "server_error" | "gateway_error" | "network_error"
   details?: string
 }
-

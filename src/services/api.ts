@@ -8,9 +8,6 @@ import type {
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
 export class ApiService {
-  /**
-   * Fetch sync data for a specific integration
-   */
   static async fetchSyncData(
     applicationId: ApplicationId,
   ): Promise<SyncApiResponse> {
@@ -41,7 +38,6 @@ export class ApiService {
         throw error
       }
 
-      // Network error or other unexpected error
       throw this.createError(
         0,
         "Network error. Please check your connection.",
@@ -50,9 +46,6 @@ export class ApiService {
     }
   }
 
-  /**
-   * Handle HTTP error responses and map to ApiError
-   */
   private static async handleErrorResponse(
     response: Response,
   ): Promise<ApiError> {
@@ -65,43 +58,24 @@ export class ApiService {
       message = errorData.message || message
       details = errorData.details || ""
     } catch {
-      // If response is not JSON, use status text
       message = response.statusText || message
     }
 
     if (status >= 400 && status < 500) {
-      return this.createError(
-        status,
-        message,
-        "client_error",
-        details,
-      )
+      return this.createError(status, message, "client_error", details)
     }
 
     if (status === 500) {
-      return this.createError(
-        500,
-        message,
-        "server_error",
-        details,
-      )
+      return this.createError(500, message, "server_error", details)
     }
 
     if (status === 502 || status === 503 || status === 504) {
-      return this.createError(
-        status,
-        message,
-        "gateway_error",
-        details,
-      )
+      return this.createError(status, message, "gateway_error", details)
     }
 
     return this.createError(status, message, "server_error", details)
   }
 
-  /**
-   * Create a structured ApiError object
-   */
   private static createError(
     status: number,
     message: string,
