@@ -1,58 +1,14 @@
 import type { SyncChange } from "../types"
 import { formatFieldName } from "../utils/format"
+import { renderSyncValue } from "../utils/syncValue"
+import { CHANGE_STYLES, CHANGE_ICON } from "../constants/changeStyles"
 
 interface SyncPreviewProps {
   changes: SyncChange[]
 }
 
 export function SyncPreview({ changes }: SyncPreviewProps) {
-  const changesByType = {
-    ADD: changes.filter((c) => c.change_type === "ADD"),
-    UPDATE: changes.filter((c) => c.change_type === "UPDATE"),
-    DELETE: changes.filter((c) => c.change_type === "DELETE"),
-  }
-
-  const renderValue = (value: any): string => {
-    if (value === null || value === undefined) {
-      return "(empty)"
-    }
-    if (typeof value === "object") {
-      return JSON.stringify(value)
-    }
-    return String(value)
-  }
-
-  const getChangeIcon = (type: string) => {
-    const icons = {
-      ADD: "add_circle",
-      UPDATE: "sync",
-      DELETE: "remove_circle",
-    }
-    return icons[type as keyof typeof icons] || "circle"
-  }
-
-  const getChangeStyles = (type: string) => {
-    const styles = {
-      ADD: {
-        badge: "bg-[#eef8f3] text-[#1e6041]",
-        icon: "text-[#22c55e]",
-      },
-      UPDATE: {
-        badge: "bg-tertiary-fixed text-on-tertiary-container",
-        icon: "text-on-tertiary-container",
-      },
-      DELETE: {
-        badge: "bg-error-container text-on-error-container",
-        icon: "text-error",
-      },
-    }
-    return (
-      styles[type as keyof typeof styles] || {
-        badge: "bg-surface-variant text-on-surface-variant",
-        icon: "text-on-surface-variant",
-      }
-    )
-  }
+  const updateCount = changes.filter((c) => c.change_type === "UPDATE").length
 
   return (
     <div className="bg-surface-container-lowest rounded-2xl p-6 ambient-shadow">
@@ -62,10 +18,10 @@ export function SyncPreview({ changes }: SyncPreviewProps) {
         </h3>
         <p className="font-body text-sm text-on-surface-variant">
           {changes.length} change{changes.length !== 1 ? "s" : ""} detected
-          {changesByType.UPDATE.length > 0 && (
+          {updateCount > 0 && (
             <span className="text-on-error-container font-semibold ml-1">
-              • {changesByType.UPDATE.length} conflict
-              {changesByType.UPDATE.length !== 1 ? "s" : ""} require review
+              • {updateCount} conflict
+              {updateCount !== 1 ? "s" : ""} require review
             </span>
           )}
         </p>
@@ -73,7 +29,7 @@ export function SyncPreview({ changes }: SyncPreviewProps) {
 
       <div className="space-y-3">
         {changes.map((change) => {
-          const styles = getChangeStyles(change.change_type)
+          const styles = CHANGE_STYLES[change.change_type]
           return (
             <div
               key={change.id}
@@ -84,7 +40,7 @@ export function SyncPreview({ changes }: SyncPreviewProps) {
                   className={`material-symbols-outlined text-[20px] ${styles.icon}`}
                   style={{ fontVariationSettings: "'FILL' 1" }}
                 >
-                  {getChangeIcon(change.change_type)}
+                  {CHANGE_ICON[change.change_type]}
                 </span>
                 <span
                   className={`px-2.5 py-1 rounded-full ${styles.badge} font-label text-xs font-semibold uppercase tracking-wide`}
@@ -103,7 +59,7 @@ export function SyncPreview({ changes }: SyncPreviewProps) {
                       New value:
                     </span>
                     <span className="font-body text-sm text-on-surface">
-                      {renderValue(change.new_value)}
+                      {renderSyncValue(change.new_value)}
                     </span>
                   </div>
                 )}
@@ -115,7 +71,7 @@ export function SyncPreview({ changes }: SyncPreviewProps) {
                         Current:
                       </span>
                       <span className="font-body text-sm text-on-surface">
-                        {renderValue(change.current_value)}
+                        {renderSyncValue(change.current_value)}
                       </span>
                     </div>
                     <span className="material-symbols-outlined text-on-surface-variant">
@@ -126,7 +82,7 @@ export function SyncPreview({ changes }: SyncPreviewProps) {
                         External:
                       </span>
                       <span className="font-body text-sm text-on-tertiary-container font-semibold">
-                        {renderValue(change.new_value)}
+                        {renderSyncValue(change.new_value)}
                       </span>
                     </div>
                   </div>
@@ -138,7 +94,7 @@ export function SyncPreview({ changes }: SyncPreviewProps) {
                       Will be deleted:
                     </span>
                     <span className="font-body text-sm text-on-error-container line-through">
-                      {renderValue(change.current_value)}
+                      {renderSyncValue(change.current_value)}
                     </span>
                   </div>
                 )}

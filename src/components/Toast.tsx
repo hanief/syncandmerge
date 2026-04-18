@@ -54,6 +54,8 @@ export function Toast({ message, type = 'info', isVisible, onClose }: ToastProps
     <AnimatePresence>
       {isVisible && (
         <motion.div
+          role="alert"
+          aria-live="assertive"
           className={`fixed top-20 left-1/2 -translate-x-1/2 z-[9999] ${styles.bg} px-6 py-4 rounded-xl shadow-lg border-l-4 ${styles.border} min-w-[300px] max-w-[500px]`}
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}

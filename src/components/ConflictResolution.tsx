@@ -1,12 +1,14 @@
 import type { SyncChange } from "../types"
 import { formatFieldName } from "../utils/format"
+import { renderSyncValue } from "../utils/syncValue"
+import { CHANGE_STYLES } from "../constants/changeStyles"
 
 interface ConflictResolutionProps {
   changes: SyncChange[]
   onResolve: (
     changeId: string,
-    resolution: "keep_current" | "accept_new" | "custom",
-    customValue?: any,
+    resolution: NonNullable<SyncChange["resolution"]>,
+    customValue?: SyncChange["custom_value"],
   ) => void
 }
 
@@ -14,25 +16,19 @@ export function ConflictResolution({
   changes,
   onResolve,
 }: ConflictResolutionProps) {
-  const renderValue = (value: any): string => {
-    if (value === null || value === undefined) return "(empty)"
-    if (typeof value === "object") return JSON.stringify(value)
-    return String(value)
-  }
-
   const renderCardHeader = (change: SyncChange) => (
     <div className="flex items-center gap-2 mb-3">
       <span
-        className={`material-symbols-outlined text-[18px] ${change.resolved ? "text-[#22c55e]" : changeTypeColor(change.change_type)}`}
+        className={`material-symbols-outlined text-[18px] ${change.resolved ? "text-[#22c55e]" : CHANGE_STYLES[change.change_type].color}`}
         style={{ fontVariationSettings: "'FILL' 1" }}
       >
-        {change.resolved ? "check_circle" : changeTypeIcon(change.change_type)}
+        {change.resolved ? "check_circle" : CHANGE_STYLES[change.change_type].iconName}
       </span>
       <span className="font-label text-sm font-bold text-on-surface flex-1">
         {formatFieldName(change.field_name)}
       </span>
       <span
-        className={`px-2 py-0.5 rounded-full font-label text-xs font-semibold ${changeBadgeStyle(change.change_type)}`}
+        className={`px-2 py-0.5 rounded-full font-label text-xs font-semibold ${CHANGE_STYLES[change.change_type].badge}`}
       >
         {change.change_type}
       </span>
@@ -65,7 +61,7 @@ export function ConflictResolution({
           </span>
         </div>
         <div className="font-body text-xs text-on-surface p-2 bg-surface rounded break-words">
-          {renderValue(change.current_value)}
+          {renderSyncValue(change.current_value)}
         </div>
       </div>
 
@@ -88,7 +84,7 @@ export function ConflictResolution({
           </span>
         </div>
         <div className="font-body text-xs text-on-surface p-2 bg-surface rounded break-words">
-          {renderValue(change.new_value)}
+          {renderSyncValue(change.new_value)}
         </div>
       </div>
     </div>
@@ -101,7 +97,7 @@ export function ConflictResolution({
           New:
         </span>
         <span className="font-body text-xs text-on-surface break-words">
-          {renderValue(change.new_value)}
+          {renderSyncValue(change.new_value)}
         </span>
       </div>
       <button
@@ -140,7 +136,7 @@ export function ConflictResolution({
         <span
           className={`font-body text-xs break-words ${change.resolution === "accept_new" ? "line-through text-on-surface-variant" : "text-on-surface"}`}
         >
-          {renderValue(change.current_value)}
+          {renderSyncValue(change.current_value)}
         </span>
       </div>
       <button
@@ -213,37 +209,4 @@ export function ConflictResolution({
       )}
     </div>
   )
-}
-
-function changeTypeIcon(type: string): string {
-  switch (type) {
-    case "ADD":
-      return "add_circle"
-    case "DELETE":
-      return "delete"
-    default:
-      return "warning"
-  }
-}
-
-function changeTypeColor(type: string): string {
-  switch (type) {
-    case "ADD":
-      return "text-[#22c55e]"
-    case "DELETE":
-      return "text-error"
-    default:
-      return "text-on-error-container"
-  }
-}
-
-function changeBadgeStyle(type: string): string {
-  switch (type) {
-    case "ADD":
-      return "bg-[#eef8f3] text-[#1e6041]"
-    case "DELETE":
-      return "bg-error-container text-on-error-container"
-    default:
-      return "bg-surface-container-highest text-on-surface-variant"
-  }
 }

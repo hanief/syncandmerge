@@ -4,7 +4,7 @@ import { useSyncStore } from "../stores/syncStore"
 import { useToast } from "../hooks/useToast"
 import { Toast } from "../components/Toast"
 import { ConflictResolution } from "../components/ConflictResolution"
-import type { SyncEvent } from "../types"
+import { createSyncEvent } from "../utils/syncEvent"
 
 export function Conflicts() {
   const navigate = useNavigate()
@@ -46,20 +46,7 @@ export function Conflicts() {
       return
     }
 
-    const now = new Date()
-    const event: SyncEvent = {
-      id: `sync-${now.getTime()}-${integrationId}`,
-      integration_id: integration.id,
-      application_name: integration.application_name,
-      timestamp: now.toISOString(),
-      status: "success",
-      changes_applied: data.changes.length,
-      conflicts_resolved: data.changes.filter((c) => c.resolved).length,
-      version: integration.version,
-      user: "admin@company.com",
-    }
-
-    appendHistoryEvent(integration.id, event)
+    appendHistoryEvent(integration.id, createSyncEvent({ integration, changes: data.changes }))
     updateIntegrationStatus(integration.id, "synced")
     resetIntegration(integration.id)
     showToast(`Applied ${data.changes.length} changes for ${integration.application_name}`, "success")
@@ -71,20 +58,8 @@ export function Conflicts() {
       return
     }
 
-    const now = new Date()
     conflictGroups.forEach(({ integration, data }) => {
-      const event: SyncEvent = {
-        id: `sync-${now.getTime()}-${integration.id}`,
-        integration_id: integration.id,
-        application_name: integration.application_name,
-        timestamp: now.toISOString(),
-        status: "success",
-        changes_applied: data.changes.length,
-        conflicts_resolved: data.changes.filter((c) => c.resolved).length,
-        version: integration.version,
-        user: "admin@company.com",
-      }
-      appendHistoryEvent(integration.id, event)
+      appendHistoryEvent(integration.id, createSyncEvent({ integration, changes: data.changes }))
       updateIntegration(integration.id, { status: "synced" })
       resetIntegration(integration.id)
     })

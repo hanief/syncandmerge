@@ -64,17 +64,19 @@ export interface Integration {
 // Sync Change Types
 export type ChangeType = "ADD" | "UPDATE" | "DELETE"
 
+export type SyncValue = string | number | boolean | null | Record<string, unknown> | unknown[]
+
 export interface SyncChange {
   id: string
   field_name: string
   change_type: ChangeType
-  current_value: any
-  new_value: any
+  current_value: SyncValue
+  new_value: SyncValue
   entity_type?: string
   entity_id?: string
   resolved?: boolean
   resolution?: "keep_current" | "accept_new" | "custom"
-  custom_value?: any
+  custom_value?: SyncValue
 }
 
 export interface SyncApproval {
@@ -91,7 +93,7 @@ export interface ApiResponse<T> {
 
 export interface SyncApiResponse {
   sync_approval: SyncApproval
-  metadata: Record<string, any>
+  metadata: Record<string, string | number | boolean>
 }
 
 // Sync History Types
@@ -116,11 +118,3 @@ export interface ApiError {
   details?: string
 }
 
-// UI State Types
-export interface SyncState {
-  isLoading: boolean
-  error: ApiError | null
-  changes: SyncChange[]
-  hasConflicts: boolean
-  canApply: boolean
-}

@@ -5,7 +5,29 @@ import { useIntegrationStore } from '../stores/integrationStore';
 import { useSyncStore } from '../stores/syncStore';
 import { StatusBadge } from '../components/StatusBadge';
 import { formatDate } from '../utils/format';
-import type { Integration } from '../types';
+import type { Integration, IntegrationStatus } from '../types';
+
+interface FilterButtonProps {
+  label: string
+  value: IntegrationStatus | 'all'
+  active: boolean
+  onClick: () => void
+}
+
+function FilterButton({ label, active, onClick }: FilterButtonProps) {
+  return (
+    <button
+      onClick={onClick}
+      className={`px-5 py-2.5 rounded-full font-label text-sm font-semibold transition-colors shadow-sm ${
+        active
+          ? 'bg-on-surface text-surface'
+          : 'bg-surface-container-highest text-on-surface-variant hover:bg-surface-variant hover:text-on-surface'
+      }`}
+    >
+      {label}
+    </button>
+  )
+}
 
 export function IntegrationsList() {
   const navigate = useNavigate();
@@ -38,7 +60,7 @@ export function IntegrationsList() {
           updateIntegration(integration.id, {
             status: hasConflicts ? 'conflict' : 'synced',
             last_sync: new Date().toISOString(),
-            version: useIntegrationStore.getState().integrations.find(i => i.id === integration.id)!.version + 1,
+            version: (useIntegrationStore.getState().integrations.find(i => i.id === integration.id)?.version ?? integration.version) + 1,
           });
         } catch {
           updateIntegrationStatus(integration.id, 'error');
@@ -75,56 +97,11 @@ export function IntegrationsList() {
 
         {/* Filter Tabs */}
         <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => setFilter('all')}
-            className={`px-5 py-2.5 rounded-full font-label text-sm font-semibold transition-colors shadow-sm ${
-              filter === 'all'
-                ? 'bg-on-surface text-surface'
-                : 'bg-surface-container-highest text-on-surface-variant hover:bg-surface-variant hover:text-on-surface'
-            }`}
-          >
-            All
-          </button>
-          <button
-            onClick={() => setFilter('synced')}
-            className={`px-5 py-2.5 rounded-full font-label text-sm font-semibold transition-colors shadow-sm ${
-              filter === 'synced'
-                ? 'bg-on-surface text-surface'
-                : 'bg-surface-container-highest text-on-surface-variant hover:bg-surface-variant hover:text-on-surface'
-            }`}
-          >
-            Synced
-          </button>
-          <button
-            onClick={() => setFilter('conflict')}
-            className={`px-5 py-2.5 rounded-full font-label text-sm font-semibold transition-colors shadow-sm ${
-              filter === 'conflict'
-                ? 'bg-on-surface text-surface'
-                : 'bg-surface-container-highest text-on-surface-variant hover:bg-surface-variant hover:text-on-surface'
-            }`}
-          >
-            Conflict
-          </button>
-          <button
-            onClick={() => setFilter('syncing')}
-            className={`px-5 py-2.5 rounded-full font-label text-sm font-semibold transition-colors shadow-sm ${
-              filter === 'syncing'
-                ? 'bg-on-surface text-surface'
-                : 'bg-surface-container-highest text-on-surface-variant hover:bg-surface-variant hover:text-on-surface'
-            }`}
-          >
-            Syncing
-          </button>
-          <button
-            onClick={() => setFilter('error')}
-            className={`px-5 py-2.5 rounded-full font-label text-sm font-semibold transition-colors shadow-sm ${
-              filter === 'error'
-                ? 'bg-on-surface text-surface'
-                : 'bg-surface-container-highest text-on-surface-variant hover:bg-surface-variant hover:text-on-surface'
-            }`}
-          >
-            Error
-          </button>
+          <FilterButton label="All" value="all" active={filter === 'all'} onClick={() => setFilter('all')} />
+          <FilterButton label="Synced" value="synced" active={filter === 'synced'} onClick={() => setFilter('synced')} />
+          <FilterButton label="Conflict" value="conflict" active={filter === 'conflict'} onClick={() => setFilter('conflict')} />
+          <FilterButton label="Syncing" value="syncing" active={filter === 'syncing'} onClick={() => setFilter('syncing')} />
+          <FilterButton label="Error" value="error" active={filter === 'error'} onClick={() => setFilter('error')} />
         </div>
       </div>
 

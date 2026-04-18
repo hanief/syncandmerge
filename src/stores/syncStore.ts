@@ -2,6 +2,15 @@ import { create } from 'zustand';
 import type { SyncChange, SyncEvent, ApiError, ApplicationId } from '../types';
 import { ApiService } from '../services/api';
 
+function isApiError(err: unknown): err is ApiError {
+  return typeof err === 'object' && err !== null && 'status' in err && 'type' in err;
+}
+
+function stripResolution(change: SyncChange): Omit<SyncChange, 'resolved' | 'resolution' | 'custom_value'> {
+  const { resolved: _r, resolution: _res, custom_value: _cv, ...rest } = change;
+  return rest;
+}
+
 interface PerIntegrationSyncData {
   isLoading: boolean;
   error: ApiError | null;
@@ -24,7 +33,7 @@ interface SyncStoreState {
 
   // Actions
   fetchSyncData: (integrationId: string, applicationId: ApplicationId) => Promise<void>;
-  resolveChange: (integrationId: string, changeId: string, resolution: 'keep_current' | 'accept_new' | 'custom', customValue?: any) => void;
+  resolveChange: (integrationId: string, changeId: string, resolution: SyncChange['resolution'], customValue?: SyncChange['custom_value']) => void;
   bulkResolve: (integrationId: string, resolution: 'keep_current' | 'accept_new') => void;
   bulkResolveAll: (resolution: 'keep_current' | 'accept_new') => void;
   resetResolutions: (integrationId: string) => void;
@@ -63,7 +72,9 @@ export const useSyncStore = create<SyncStoreState>((set, get) => ({
         },
       }));
     } catch (error) {
-      const apiError = error as ApiError;
+      const apiError: ApiError = isApiError(error)
+        ? error
+        : { status: 0, message: 'An unexpected error occurred', type: 'network_error' };
       set((state) => ({
         syncData: {
           ...state.syncData,
@@ -141,7 +152,7 @@ export const useSyncStore = create<SyncStoreState>((set, get) => ({
   resetResolutions: (integrationId) => {
     set((state) => {
       const current = state.syncData[integrationId] ?? defaultSyncData;
-      const updatedChanges = current.changes.map(({ resolved: _, resolution: __, custom_value: ___, ...rest }) => rest);
+      const updatedChanges = current.changes.map(stripResolution);
       return {
         syncData: {
           ...state.syncData,
@@ -158,7 +169,7 @@ export const useSyncStore = create<SyncStoreState>((set, get) => ({
           id,
           {
             ...data,
-            changes: data.changes.map(({ resolved: _, resolution: __, custom_value: ___, ...rest }) => rest),
+            changes: data.changes.map(stripResolution),
             canApply: false,
           },
         ]),

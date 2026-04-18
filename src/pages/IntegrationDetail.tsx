@@ -12,7 +12,8 @@ import { SyncHistory } from "../components/SyncHistory"
 import { StatusBadge } from "../components/StatusBadge"
 import { Toast } from "../components/Toast"
 import { formatDate } from "../utils/format"
-import type { ApplicationId, SyncEvent } from "../types"
+import { createSyncEvent } from "../utils/syncEvent"
+import type { ApplicationId } from "../types"
 
 type ViewMode = "overview" | "resolve"
 
@@ -78,10 +79,9 @@ export function IntegrationDetail() {
       })
       showToast("Sync data fetched successfully", "success")
       setViewMode("resolve")
-    } catch (err) {
+    } catch {
       showToast("Sync failed. Please try again.", "error")
       setViewMode("overview")
-      console.error("Sync failed:", err)
     }
   }
 
@@ -96,20 +96,7 @@ export function IntegrationDetail() {
       return
     }
 
-    const now = new Date()
-    const event: SyncEvent = {
-      id: `sync-${now.getTime()}`,
-      integration_id: integration.id,
-      application_name: integration.application_name,
-      timestamp: now.toISOString(),
-      status: "success",
-      changes_applied: changes.length,
-      conflicts_resolved: changes.filter((c) => c.resolved).length,
-      version: integration.version,
-      user: "admin@company.com",
-    }
-
-    appendHistoryEvent(integration.id, event)
+    appendHistoryEvent(integration.id, createSyncEvent({ integration, changes }))
     updateIntegrationStatus(integration.id, "synced")
     showToast(
       `Successfully applied ${changes.length} change${changes.length !== 1 ? "s" : ""} to ${integration.application_name}`,

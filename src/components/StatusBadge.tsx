@@ -1,7 +1,11 @@
 import { motion } from 'framer-motion';
 
+import type { IntegrationStatus } from '../types'
+
+type StatusBadgeStatus = IntegrationStatus | 'success' | 'failed' | 'partial'
+
 interface StatusBadgeProps {
-  status: string;
+  status: StatusBadgeStatus | string;
   count?: number;
 }
 
