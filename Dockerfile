@@ -13,6 +13,9 @@ RUN npm ci
 # Copy source code
 COPY . .
 
+# Use .env.example as fallback if .env does not exist
+RUN [ ! -f .env ] && cp .env.example .env || true
+
 # Build the application
 RUN npm run build
 
