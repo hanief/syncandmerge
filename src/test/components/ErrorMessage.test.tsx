@@ -10,14 +10,15 @@ describe('ErrorMessage', () => {
     expect(screen.getByText('Something went wrong')).toBeInTheDocument()
   })
 
-  it('renders an ApiError message', () => {
+  it('renders an ApiError with the correct title and description for server_error', () => {
     const apiError: ApiError = {
       status: 500,
       message: 'Internal server error',
       type: 'server_error',
     }
     render(<ErrorMessage error={apiError} />)
-    expect(screen.getByText('Internal server error')).toBeInTheDocument()
+    expect(screen.getByText('Server Error')).toBeInTheDocument()
+    expect(screen.getByText('The server encountered an unexpected problem while processing your request.')).toBeInTheDocument()
   })
 
   it('renders details when provided in ApiError', () => {
@@ -28,6 +29,7 @@ describe('ErrorMessage', () => {
       details: 'Missing required field: application_id',
     }
     render(<ErrorMessage error={apiError} />)
+    expect(screen.getByText('Configuration Required')).toBeInTheDocument()
     expect(screen.getByText('Missing required field: application_id')).toBeInTheDocument()
   })
 

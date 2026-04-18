@@ -56,26 +56,26 @@ export function Toast({ message, type = 'info', isVisible, onClose }: ToastProps
         <motion.div
           role="alert"
           aria-live="assertive"
-          className={`fixed top-20 left-1/2 -translate-x-1/2 z-[9999] ${styles.bg} px-6 py-4 rounded-xl shadow-lg border-l-4 ${styles.border} min-w-[300px] max-w-[500px]`}
-          initial={{ opacity: 0, y: -50 }}
+          className={`fixed top-4 left-1/2 -translate-x-1/2 z-9999 ${styles.bg} px-4 py-2.5 rounded-lg shadow-md border-l-4 ${styles.border} min-w-65 max-w-105`}
+          initial={{ opacity: 0, y: -24 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -50 }}
-          transition={{ duration: 0.3 }}
+          exit={{ opacity: 0, y: -24 }}
+          transition={{ duration: 0.25 }}
         >
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <span
-              className={`material-symbols-outlined text-[20px] ${styles.iconColor}`}
+              className={`material-symbols-outlined text-[16px] shrink-0 ${styles.iconColor}`}
               style={{ fontVariationSettings: "'FILL' 1" }}
             >
               {styles.icon}
             </span>
-            <p className={`font-body text-sm ${styles.textColor} flex-1`}>{message}</p>
+            <p className={`font-body text-xs ${styles.textColor} flex-1`}>{message}</p>
             <button
               onClick={onClose}
-              className={`${styles.iconColor} hover:opacity-70 transition-opacity`}
+              className={`${styles.iconColor} hover:opacity-70 transition-opacity shrink-0`}
               aria-label="Close notification"
             >
-              <span className="material-symbols-outlined text-[20px]">close</span>
+              <span className="material-symbols-outlined text-[16px]">close</span>
             </button>
           </div>
         </motion.div>

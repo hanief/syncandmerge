@@ -72,11 +72,7 @@ export class ApiService {
     if (status >= 400 && status < 500) {
       return this.createError(
         status,
-        status === 400
-          ? "Bad request. Please check the integration configuration."
-          : status === 404
-            ? "Integration not found. Please verify the application ID."
-            : "Client error. The integration may be misconfigured.",
+        message,
         "client_error",
         details,
       )
@@ -85,7 +81,7 @@ export class ApiService {
     if (status === 500) {
       return this.createError(
         500,
-        "Internal server error. Please try again later.",
+        message,
         "server_error",
         details,
       )
@@ -94,7 +90,7 @@ export class ApiService {
     if (status === 502 || status === 503 || status === 504) {
       return this.createError(
         status,
-        "Gateway error. The integration service is temporarily unavailable.",
+        message,
         "gateway_error",
         details,
       )
