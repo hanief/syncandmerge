@@ -97,7 +97,10 @@ export function IntegrationDetail() {
       return
     }
 
-    appendHistoryEvent(integration.id, createSyncEvent({ integration, changes }))
+    appendHistoryEvent(
+      integration.id,
+      createSyncEvent({ integration, changes }),
+    )
     updateIntegrationStatus(integration.id, "synced")
     showToast(
       `Successfully applied ${changes.length} change${changes.length !== 1 ? "s" : ""} to ${integration.application_name}`,
@@ -187,7 +190,6 @@ export function IntegrationDetail() {
         onClose={hideToast}
       />
 
-      {/* Sticky integration header — sits below the TopBar (h-16 = top-16) */}
       <div className="sticky top-0 z-10 bg-surface -mx-8 px-8 pt-6 pb-4 mb-4">
         <div className="flex items-center text-sm font-label text-on-surface-variant gap-2 mb-4">
           <button
@@ -251,17 +253,17 @@ export function IntegrationDetail() {
         </div>
       </div>
 
-      {/* Scrollable content */}
       <AnimatePresence mode="wait">{renderContent()}</AnimatePresence>
 
-      {/* Fixed bottom action bar — only visible in resolve mode */}
       {showBottomBar && (
         <div className="fixed bottom-0 left-0 md:left-64 right-0 z-50 bg-surface border-t border-outline-variant">
           <div className="max-w-7xl mx-auto px-8 py-4 flex items-center gap-3">
             <div className="flex items-center gap-2 flex-1">
               <BulkResolutionActions
                 onKeepLocal={() => bulkResolve(integration.id, "keep_current")}
-                onAcceptExternal={() => bulkResolve(integration.id, "accept_new")}
+                onAcceptExternal={() =>
+                  bulkResolve(integration.id, "accept_new")
+                }
                 onReset={() => resetResolutions(integration.id)}
               />
             </div>

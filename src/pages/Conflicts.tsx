@@ -9,13 +9,25 @@ import { BulkResolutionActions } from "../components/BulkResolutionActions"
 export function Conflicts() {
   const navigate = useNavigate()
   const { toast, showToast, hideToast } = useToast()
-  const { resolveChange, bulkResolve, bulkResolveAll, resetResolutions, resetResolutionsAll } = useSyncStore()
+  const {
+    resolveChange,
+    bulkResolve,
+    bulkResolveAll,
+    resetResolutions,
+    resetResolutionsAll,
+  } = useSyncStore()
 
-  const { conflictGroups, totalChanges, totalResolved, allResolved, applyIntegration, applyAll } =
-    useConflictActions({
-      onSuccess: (msg) => showToast(msg, "success"),
-      onWarning: (msg) => showToast(msg, "warning"),
-    })
+  const {
+    conflictGroups,
+    totalChanges,
+    totalResolved,
+    allResolved,
+    applyIntegration,
+    applyAll,
+  } = useConflictActions({
+    onSuccess: (msg) => showToast(msg, "success"),
+    onWarning: (msg) => showToast(msg, "warning"),
+  })
 
   if (conflictGroups.length === 0) {
     return (
@@ -52,7 +64,6 @@ export function Conflicts() {
         onClose={hideToast}
       />
 
-      {/* Header */}
       <div className="sticky top-0 z-10 bg-surface -mx-8 px-8 pt-6 pb-4 mb-4">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
@@ -69,7 +80,6 @@ export function Conflicts() {
         </div>
       </div>
 
-      {/* Integration groups */}
       <div className="space-y-6">
         {conflictGroups.map(({ integration, data }) => {
           const groupResolved = data.changes.filter((c) => c.resolved).length
@@ -81,7 +91,6 @@ export function Conflicts() {
               key={integration.id}
               className="bg-surface-container-lowest rounded-2xl ambient-shadow overflow-hidden"
             >
-              {/* Integration group header */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-4 border-b border-outline-variant/20">
                 <button
                   onClick={() => navigate(`/integrations/${integration.id}`)}
@@ -105,8 +114,12 @@ export function Conflicts() {
                     compact
                     localLabel="All Local"
                     externalLabel="All External"
-                    onKeepLocal={() => bulkResolve(integration.id, "keep_current")}
-                    onAcceptExternal={() => bulkResolve(integration.id, "accept_new")}
+                    onKeepLocal={() =>
+                      bulkResolve(integration.id, "keep_current")
+                    }
+                    onAcceptExternal={() =>
+                      bulkResolve(integration.id, "accept_new")
+                    }
                     onReset={() => resetResolutions(integration.id)}
                   />
                   <button
@@ -123,7 +136,6 @@ export function Conflicts() {
                 </div>
               </div>
 
-              {/* Conflicts for this integration */}
               <div className="p-4">
                 <ConflictResolution
                   changes={data.changes}
@@ -142,7 +154,6 @@ export function Conflicts() {
         })}
       </div>
 
-      {/* Fixed bottom global action bar */}
       <div className="fixed bottom-0 left-0 md:left-64 right-0 z-50 bg-surface border-t border-outline-variant">
         <div className="max-w-7xl mx-auto px-8 py-4 flex items-center gap-3">
           <div className="flex items-center gap-2 flex-1 flex-wrap">

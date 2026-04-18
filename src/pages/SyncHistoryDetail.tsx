@@ -5,7 +5,6 @@ import { StatusBadge } from "../components/StatusBadge"
 import { ResolutionRow } from "../components/ResolutionRow"
 import { formatTimestamp } from "../utils/format"
 
-
 export function SyncHistoryDetail() {
   const { eventId } = useParams<{ eventId: string }>()
   const navigate = useNavigate()
@@ -25,14 +24,18 @@ export function SyncHistoryDetail() {
           onClick={() => navigate("/logs")}
           className="flex items-center gap-2 text-sm font-label text-on-surface-variant hover:text-on-surface transition-colors mb-8"
         >
-          <span className="material-symbols-outlined text-[16px]">arrow_back</span>
+          <span className="material-symbols-outlined text-[16px]">
+            arrow_back
+          </span>
           Back to Logs
         </button>
         <div className="bg-surface-container-lowest rounded-2xl p-12 ambient-shadow text-center">
           <span className="material-symbols-outlined text-6xl text-on-surface-variant block mb-4">
             search_off
           </span>
-          <p className="font-headline text-xl font-bold text-on-surface mb-2">Event not found</p>
+          <p className="font-headline text-xl font-bold text-on-surface mb-2">
+            Event not found
+          </p>
           <p className="font-body text-sm text-on-surface-variant">
             This sync event may have been cleared from state.
           </p>
@@ -43,7 +46,6 @@ export function SyncHistoryDetail() {
 
   return (
     <div className="w-full pb-12">
-      {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm font-label text-on-surface-variant mb-6">
         <button
           onClick={() => navigate("/logs")}
@@ -51,11 +53,12 @@ export function SyncHistoryDetail() {
         >
           Logs
         </button>
-        <span className="material-symbols-outlined text-[16px]">chevron_right</span>
+        <span className="material-symbols-outlined text-[16px]">
+          chevron_right
+        </span>
         <span className="text-on-surface font-medium">Sync Event Detail</span>
       </div>
 
-      {/* Event header card */}
       <div className="bg-surface-container-lowest rounded-2xl p-6 ambient-shadow mb-6">
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
           <div className="flex items-center gap-4">
@@ -79,27 +82,40 @@ export function SyncHistoryDetail() {
 
           <div className="flex flex-wrap gap-6 text-sm shrink-0">
             <div>
-              <p className="font-label text-xs text-on-surface-variant mb-0.5">Event ID</p>
-              <p className="font-body text-xs text-on-surface font-mono">{event.id}</p>
+              <p className="font-label text-xs text-on-surface-variant mb-0.5">
+                Event ID
+              </p>
+              <p className="font-body text-xs text-on-surface font-mono">
+                {event.id}
+              </p>
             </div>
             <div>
-              <p className="font-label text-xs text-on-surface-variant mb-0.5">Version</p>
-              <p className="font-body text-sm font-bold text-on-surface">v{event.version}</p>
+              <p className="font-label text-xs text-on-surface-variant mb-0.5">
+                Version
+              </p>
+              <p className="font-body text-sm font-bold text-on-surface">
+                v{event.version}
+              </p>
             </div>
             <div>
-              <p className="font-label text-xs text-on-surface-variant mb-0.5">By</p>
-              <p className="font-body text-sm text-on-surface">{event.user ?? "—"}</p>
+              <p className="font-label text-xs text-on-surface-variant mb-0.5">
+                By
+              </p>
+              <p className="font-body text-sm text-on-surface">
+                {event.user ?? "—"}
+              </p>
             </div>
           </div>
         </div>
 
-        {/* Summary stats */}
         <div className="flex flex-wrap gap-6 mt-6 pt-6 border-t border-outline-variant/20">
           <div className="flex items-center gap-2">
             <span className="material-symbols-outlined text-[18px] text-on-surface-variant">
               change_circle
             </span>
-            <span className="font-label text-xs text-on-surface-variant">Changes Applied</span>
+            <span className="font-label text-xs text-on-surface-variant">
+              Changes Applied
+            </span>
             <span className="font-label text-sm font-bold text-on-surface">
               {event.changes_applied}
             </span>
@@ -108,7 +124,9 @@ export function SyncHistoryDetail() {
             <span className="material-symbols-outlined text-[18px] text-on-surface-variant">
               warning
             </span>
-            <span className="font-label text-xs text-on-surface-variant">Conflicts Resolved</span>
+            <span className="font-label text-xs text-on-surface-variant">
+              Conflicts Resolved
+            </span>
             <span className="font-label text-sm font-bold text-on-surface">
               {event.conflicts_resolved}
             </span>
@@ -121,7 +139,6 @@ export function SyncHistoryDetail() {
         </div>
       </div>
 
-      {/* Resolution audit trail */}
       {event.resolutions && event.resolutions.length > 0 ? (
         <div className="bg-surface-container-lowest rounded-2xl p-6 ambient-shadow">
           <div className="mb-5">
@@ -129,8 +146,10 @@ export function SyncHistoryDetail() {
               Resolution Audit Trail
             </h2>
             <p className="font-body text-sm text-on-surface-variant">
-              {event.resolutions.length} field{event.resolutions.length !== 1 ? "s" : ""} reviewed —
-              decisions recorded at {formatTimestamp(event.timestamp)} by {event.user ?? "system"}
+              {event.resolutions.length} field
+              {event.resolutions.length !== 1 ? "s" : ""} reviewed — decisions
+              recorded at {formatTimestamp(event.timestamp)} by{" "}
+              {event.user ?? "system"}
             </p>
           </div>
 
@@ -149,11 +168,11 @@ export function SyncHistoryDetail() {
             No manual resolutions
           </p>
           <p className="font-body text-sm text-on-surface-variant">
-            All changes in this sync were applied automatically — no conflicts required review.
+            All changes in this sync were applied automatically — no conflicts
+            required review.
           </p>
         </div>
       )}
     </div>
   )
 }
-

@@ -47,7 +47,6 @@ export function SyncHistory({ events }: SyncHistoryProps) {
       <div className="relative">
         {events.map((event, index) => (
           <div key={event.id} className="relative pb-8 last:pb-0">
-            {/* Timeline marker */}
             <div className="absolute left-0 top-0 flex flex-col items-center">
               <div className="w-4 h-4 rounded-full bg-on-tertiary-container border-2 border-surface-container-lowest z-10"></div>
               {index < events.length - 1 && (
@@ -55,7 +54,6 @@ export function SyncHistory({ events }: SyncHistoryProps) {
               )}
             </div>
 
-            {/* Event content */}
             <button
               onClick={() => navigate(`/logs/${event.id}`)}
               className="ml-8 w-full text-left bg-surface-container-low rounded-xl p-4 hover:bg-surface-container transition-colors"

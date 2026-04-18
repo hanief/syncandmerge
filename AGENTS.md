@@ -1,1 +1,1 @@
-@CLAUDE.md
+Use @CLAUDE.md

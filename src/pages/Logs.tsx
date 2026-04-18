@@ -53,7 +53,6 @@ export function Logs() {
 
               return (
                 <div key={event.id} className="relative pb-6 last:pb-0">
-                  {/* Timeline line */}
                   <div className="absolute left-0 top-0 flex flex-col items-center">
                     <div className="w-4 h-4 rounded-full bg-on-tertiary-container border-2 border-surface-container-lowest z-10" />
                     {index < allEvents.length - 1 && (
@@ -61,14 +60,12 @@ export function Logs() {
                     )}
                   </div>
 
-                  {/* Event card */}
                   <div
                     className="ml-8 bg-surface-container-low rounded-xl p-4 hover:bg-surface-container transition-colors cursor-pointer"
                     onClick={() => navigate(`/logs/${event.id}`)}
                   >
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
                       <div className="flex items-center gap-2 flex-wrap">
-                        {/* Integration label */}
                         <div className="flex items-center gap-1.5">
                           {integration?.icon && (
                             <span className="text-base leading-none">
