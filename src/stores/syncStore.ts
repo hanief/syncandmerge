@@ -15,7 +15,8 @@ function isApiError(err: unknown): err is ApiError {
 function stripResolution(
   change: SyncChange,
 ): Omit<SyncChange, "resolved" | "resolution" | "custom_value"> {
-  const { resolved: _r, resolution: _res, custom_value: _cv, ...rest } = change
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { resolved, resolution, custom_value, ...rest } = change
   return rest
 }
 
@@ -217,7 +218,8 @@ export const useSyncStore = create<SyncStoreState>((set, get) => ({
 
   resetIntegration: (integrationId) => {
     set((state) => {
-      const { [integrationId]: _, ...rest } = state.syncData
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { [integrationId]: removed, ...rest } = state.syncData
       return { syncData: rest }
     })
   },
