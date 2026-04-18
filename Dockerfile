@@ -1,14 +1,15 @@
 # Use Node.js LTS as the base image
-FROM node:20-alpine AS builder
+FROM node:22-slim AS builder
 
 # Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Copy package.json only — skip lockfile so npm resolves
+# platform-specific optional dependencies for the build platform
+COPY package.json ./
 
 # Install dependencies
-RUN npm ci
+RUN npm install
 
 # Copy source code
 COPY . .
