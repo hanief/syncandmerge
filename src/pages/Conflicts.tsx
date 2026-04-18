@@ -9,7 +9,8 @@ import { createSyncEvent } from "../utils/syncEvent"
 export function Conflicts() {
   const navigate = useNavigate()
   const { toast, showToast, hideToast } = useToast()
-  const { integrations, updateIntegrationStatus, updateIntegration } = useIntegrationStore()
+  const { integrations, updateIntegrationStatus, updateIntegration } =
+    useIntegrationStore()
   const {
     syncData,
     resolveChange,
@@ -29,7 +30,10 @@ export function Conflicts() {
     }))
     .filter(({ data }) => data && data.changes.length > 0)
 
-  const totalChanges = conflictGroups.reduce((sum, { data }) => sum + data.changes.length, 0)
+  const totalChanges = conflictGroups.reduce(
+    (sum, { data }) => sum + data.changes.length,
+    0,
+  )
   const totalResolved = conflictGroups.reduce(
     (sum, { data }) => sum + data.changes.filter((c) => c.resolved).length,
     0,
@@ -46,10 +50,16 @@ export function Conflicts() {
       return
     }
 
-    appendHistoryEvent(integration.id, createSyncEvent({ integration, changes: data.changes }))
+    appendHistoryEvent(
+      integration.id,
+      createSyncEvent({ integration, changes: data.changes }),
+    )
     updateIntegrationStatus(integration.id, "synced")
     resetIntegration(integration.id)
-    showToast(`Applied ${data.changes.length} changes for ${integration.application_name}`, "success")
+    showToast(
+      `Applied ${data.changes.length} changes for ${integration.application_name}`,
+      "success",
+    )
   }
 
   const applyAll = () => {
@@ -59,12 +69,18 @@ export function Conflicts() {
     }
 
     conflictGroups.forEach(({ integration, data }) => {
-      appendHistoryEvent(integration.id, createSyncEvent({ integration, changes: data.changes }))
+      appendHistoryEvent(
+        integration.id,
+        createSyncEvent({ integration, changes: data.changes }),
+      )
       updateIntegration(integration.id, { status: "synced" })
       resetIntegration(integration.id)
     })
 
-    showToast(`Applied all changes across ${conflictGroups.length} integrations`, "success")
+    showToast(
+      `Applied all changes across ${conflictGroups.length} integrations`,
+      "success",
+    )
   }
 
   if (conflictGroups.length === 0) {
@@ -82,7 +98,9 @@ export function Conflicts() {
           <span className="material-symbols-outlined text-6xl text-on-surface-variant block mb-4">
             check_circle
           </span>
-          <p className="font-headline text-xl font-bold text-on-surface mb-2">No conflicts</p>
+          <p className="font-headline text-xl font-bold text-on-surface mb-2">
+            No conflicts
+          </p>
           <p className="font-body text-sm text-on-surface-variant">
             All integrations are in sync. Run a sync to check for new changes.
           </p>
@@ -101,7 +119,7 @@ export function Conflicts() {
       />
 
       {/* Header */}
-      <div className="sticky top-4 z-10 bg-surface -mx-8 px-8 pt-6 pb-4 mb-4">
+      <div className="sticky top-0 z-10 bg-surface -mx-8 px-8 pt-6 pb-4 mb-4">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
             <h1 className="font-headline text-4xl font-extrabold text-on-surface tracking-tight mb-1">
@@ -109,8 +127,9 @@ export function Conflicts() {
             </h1>
             <p className="font-body text-sm text-on-surface-variant">
               {totalChanges} change{totalChanges !== 1 ? "s" : ""} across{" "}
-              {conflictGroups.length} integration{conflictGroups.length !== 1 ? "s" : ""} —{" "}
-              {totalResolved} of {totalChanges} resolved
+              {conflictGroups.length} integration
+              {conflictGroups.length !== 1 ? "s" : ""} — {totalResolved} of{" "}
+              {totalChanges} resolved
             </p>
           </div>
         </div>
@@ -134,7 +153,9 @@ export function Conflicts() {
                   onClick={() => navigate(`/integrations/${integration.id}`)}
                   className="flex items-center gap-3 hover:opacity-70 transition-opacity text-left"
                 >
-                  <span className="text-2xl leading-none">{integration.icon}</span>
+                  <span className="text-2xl leading-none">
+                    {integration.icon}
+                  </span>
                   <div>
                     <span className="font-label text-base font-bold text-on-surface">
                       {integration.application_name}
@@ -183,7 +204,12 @@ export function Conflicts() {
                 <ConflictResolution
                   changes={data.changes}
                   onResolve={(changeId, resolution, customValue) =>
-                    resolveChange(integration.id, changeId, resolution, customValue)
+                    resolveChange(
+                      integration.id,
+                      changeId,
+                      resolution,
+                      customValue,
+                    )
                   }
                 />
               </div>

@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom"
 import type { SyncEvent } from "../types"
 import { StatusBadge } from "./StatusBadge"
 import { formatTimestamp } from "../utils/format"
@@ -7,6 +8,8 @@ interface SyncHistoryProps {
 }
 
 export function SyncHistory({ events }: SyncHistoryProps) {
+  const navigate = useNavigate()
+
   if (events.length === 0) {
     return (
       <div className="bg-surface-container-lowest rounded-2xl p-6 ambient-shadow">
@@ -53,7 +56,10 @@ export function SyncHistory({ events }: SyncHistoryProps) {
             </div>
 
             {/* Event content */}
-            <div className="ml-8 bg-surface-container-low rounded-xl p-4 hover:bg-surface-container transition-colors">
+            <button
+              onClick={() => navigate(`/logs/${event.id}`)}
+              className="ml-8 w-full text-left bg-surface-container-low rounded-xl p-4 hover:bg-surface-container transition-colors"
+            >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
                 <div className="flex items-center gap-3 flex-wrap">
                   <StatusBadge status={event.status} />
@@ -61,9 +67,14 @@ export function SyncHistory({ events }: SyncHistoryProps) {
                     Version {event.version}
                   </span>
                 </div>
-                <span className="font-body text-xs text-on-surface-variant">
-                  {formatTimestamp(event.timestamp)}
-                </span>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="font-body text-xs text-on-surface-variant">
+                    {formatTimestamp(event.timestamp)}
+                  </span>
+                  <span className="material-symbols-outlined text-[16px] text-on-surface-variant">
+                    chevron_right
+                  </span>
+                </div>
               </div>
 
               <div className="space-y-3">
@@ -107,7 +118,7 @@ export function SyncHistory({ events }: SyncHistoryProps) {
                   </p>
                 )}
               </div>
-            </div>
+            </button>
           </div>
         ))}
       </div>

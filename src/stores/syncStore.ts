@@ -41,6 +41,7 @@ interface SyncStoreState {
   resetIntegration: (integrationId: string) => void;
   appendHistoryEvent: (integrationId: string, event: SyncEvent) => void;
   getSyncData: (integrationId: string) => PerIntegrationSyncData;
+  getSyncEventById: (eventId: string) => SyncEvent | undefined;
 }
 
 export const useSyncStore = create<SyncStoreState>((set, get) => ({
@@ -196,5 +197,11 @@ export const useSyncStore = create<SyncStoreState>((set, get) => ({
 
   getSyncData: (integrationId) => {
     return get().syncData[integrationId] ?? defaultSyncData;
+  },
+
+  getSyncEventById: (eventId) => {
+    return Object.values(get().syncHistory)
+      .flat()
+      .find((event) => event.id === eventId);
   },
 }));

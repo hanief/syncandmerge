@@ -61,7 +61,7 @@ export function Logs() {
                   {/* Event card */}
                   <div
                     className="ml-8 bg-surface-container-low rounded-xl p-4 hover:bg-surface-container transition-colors cursor-pointer"
-                    onClick={() => integration && navigate(`/integrations/${integration.id}`)}
+                    onClick={() => navigate(`/logs/${event.id}`)}
                   >
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
                       <div className="flex items-center gap-2 flex-wrap">

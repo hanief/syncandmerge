@@ -30,17 +30,21 @@ export function NavLinks({ orientation = "vertical" }: NavLinksProps) {
         className={({ isActive }) => `${base} ${isActive ? active : inactive}`}
       >
         {({ isActive }) => (
-          <>
+          <div className="flex items-center gap-2">
             <span
               className={`material-symbols-outlined ${orientation === "horizontal" ? "text-[16px]" : "text-[20px]"}`}
-              style={{ fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0" }}
+              style={{
+                fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0",
+              }}
             >
               dashboard
             </span>
-            <span className={`font-label ${orientation === "horizontal" ? "text-xs" : "text-sm"} ${isActive ? "font-semibold" : "font-medium"}`}>
+            <span
+              className={`font-label ${orientation === "horizontal" ? "text-xs" : "text-sm"} ${isActive ? "font-semibold" : "font-medium"}`}
+            >
               Integrations
             </span>
-          </>
+          </div>
         )}
       </NavLink>
 
@@ -52,14 +56,18 @@ export function NavLinks({ orientation = "vertical" }: NavLinksProps) {
       >
         {({ isActive }) => (
           <>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-2">
               <span
                 className={`material-symbols-outlined ${orientation === "horizontal" ? "text-[16px]" : "text-[20px]"}`}
-                style={{ fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0" }}
+                style={{
+                  fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0",
+                }}
               >
                 table_rows
               </span>
-              <span className={`font-label ${orientation === "horizontal" ? "text-xs" : "text-sm"} ${isActive ? "font-semibold" : "font-medium"}`}>
+              <span
+                className={`font-label ${orientation === "horizontal" ? "text-xs" : "text-sm"} ${isActive ? "font-semibold" : "font-medium"}`}
+              >
                 Conflicts
               </span>
             </div>
@@ -82,17 +90,21 @@ export function NavLinks({ orientation = "vertical" }: NavLinksProps) {
         className={({ isActive }) => `${base} ${isActive ? active : inactive}`}
       >
         {({ isActive }) => (
-          <>
+          <div className="flex items-center gap-2">
             <span
               className={`material-symbols-outlined ${orientation === "horizontal" ? "text-[16px]" : "text-[20px]"}`}
-              style={{ fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0" }}
+              style={{
+                fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0",
+              }}
             >
               history
             </span>
-            <span className={`font-label ${orientation === "horizontal" ? "text-xs" : "text-sm"} ${isActive ? "font-semibold" : "font-medium"}`}>
+            <span
+              className={`font-label ${orientation === "horizontal" ? "text-xs" : "text-sm"} ${isActive ? "font-semibold" : "font-medium"}`}
+            >
               Logs
             </span>
-          </>
+          </div>
         )}
       </NavLink>
     </>

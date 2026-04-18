@@ -97,6 +97,18 @@ export interface SyncApiResponse {
 }
 
 // Sync History Types
+
+/** Audit record of a single field-level resolution decision */
+export interface SyncChangeResolution {
+  field_name: string
+  change_type: ChangeType
+  current_value: SyncValue
+  new_value: SyncValue
+  resolution: NonNullable<SyncChange["resolution"]>
+  custom_value?: SyncValue
+  resolved_by: string
+}
+
 export interface SyncEvent {
   id: string
   integration_id: string
@@ -108,6 +120,8 @@ export interface SyncEvent {
   version: number
   user?: string
   details?: string
+  /** Field-level resolution audit trail, present when conflicts were resolved */
+  resolutions?: SyncChangeResolution[]
 }
 
 // Error Types
