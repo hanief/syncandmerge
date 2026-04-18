@@ -1,5 +1,5 @@
 # Use Node.js LTS as the base image
-FROM node:22-slim AS builder
+FROM node:24-slim AS builder
 
 # Set working directory
 WORKDIR /app
