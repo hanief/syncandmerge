@@ -5,7 +5,9 @@ import type {
   ApplicationId,
 } from "../types"
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  "https://portier-takehometest.onrender.com/api/v1"
 
 export class ApiService {
   static async fetchSyncData(
