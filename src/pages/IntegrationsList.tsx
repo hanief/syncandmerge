@@ -1,8 +1,7 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useIntegrationStore } from '../stores/integrationStore';
-import { useSyncStore } from '../stores/syncStore';
+import { useSyncAll } from '../hooks/useSyncAll';
 import { StatusBadge } from '../components/StatusBadge';
 import { formatDate } from '../utils/format';
 import type { Integration, IntegrationStatus } from '../types';
@@ -31,9 +30,8 @@ function FilterButton({ label, active, onClick }: FilterButtonProps) {
 
 export function IntegrationsList() {
   const navigate = useNavigate();
-  const { integrations, filter, setFilter, setSelectedIntegration, updateIntegrationStatus, updateIntegration } = useIntegrationStore();
-  const { fetchSyncData } = useSyncStore();
-  const [isSyncingAll, setIsSyncingAll] = useState(false);
+  const { integrations, filter, setFilter, setSelectedIntegration } = useIntegrationStore();
+  const { syncAll, isSyncingAll } = useSyncAll();
 
   const filteredIntegrations =
     filter === 'all'
@@ -43,32 +41,6 @@ export function IntegrationsList() {
   const handleIntegrationClick = (integration: Integration) => {
     setSelectedIntegration(integration.id);
     navigate(`/integrations/${integration.id}`);
-  };
-
-  const handleSyncAll = async () => {
-    if (isSyncingAll) return;
-    setIsSyncingAll(true);
-
-    // Mark all as syncing immediately
-    integrations.forEach((i) => updateIntegrationStatus(i.id, 'syncing'));
-
-    await Promise.allSettled(
-      integrations.map(async (integration) => {
-        try {
-          await fetchSyncData(integration.id, integration.application_id);
-          const { hasConflicts } = useSyncStore.getState().getSyncData(integration.id);
-          updateIntegration(integration.id, {
-            status: hasConflicts ? 'conflict' : 'synced',
-            last_sync: new Date().toISOString(),
-            version: (useIntegrationStore.getState().integrations.find(i => i.id === integration.id)?.version ?? integration.version) + 1,
-          });
-        } catch {
-          updateIntegrationStatus(integration.id, 'error');
-        }
-      }),
-    );
-
-    setIsSyncingAll(false);
   };
 
   return (
@@ -86,7 +58,7 @@ export function IntegrationsList() {
             </p>
           </div>
           <button
-            onClick={handleSyncAll}
+            onClick={syncAll}
             disabled={isSyncingAll}
             className="bg-primary text-on-primary flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-label font-bold text-sm hover:bg-primary/90 transition-colors shadow-sm shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
           >

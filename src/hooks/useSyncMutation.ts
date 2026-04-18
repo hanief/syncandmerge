@@ -8,27 +8,18 @@ interface SyncMutationParams {
   applicationId: ApplicationId;
 }
 
-/**
- * React Query mutation hook for sync operations
- * Integrates with Zustand stores for state management
- */
 export function useSyncMutation() {
   const { fetchSyncData } = useSyncStore();
-  const { updateIntegrationStatus, updateIntegration } = useIntegrationStore();
+  const { integrations, updateIntegrationStatus, updateIntegration } = useIntegrationStore();
 
   const syncMutation = useMutation({
-    mutationFn: async ({ integrationId, applicationId }: SyncMutationParams) => {
-      return await fetchSyncData(integrationId, applicationId);
-    },
+    mutationFn: ({ integrationId, applicationId }: SyncMutationParams) =>
+      fetchSyncData(integrationId, applicationId),
     onMutate: ({ integrationId }) => {
       updateIntegrationStatus(integrationId, 'syncing');
     },
-    onSuccess: (_, { integrationId }) => {
-      const { hasConflicts } = useSyncStore.getState().getSyncData(integrationId);
-      const integration = useIntegrationStore.getState().integrations.find(
-        (i) => i.id === integrationId,
-      );
-
+    onSuccess: ({ hasConflicts }, { integrationId }) => {
+      const integration = integrations.find((i) => i.id === integrationId);
       if (integration) {
         updateIntegration(integration.id, {
           status: hasConflicts ? 'conflict' : 'synced',

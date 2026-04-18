@@ -3,7 +3,13 @@ import type { SyncChange, SyncEvent, ApiError, ApplicationId } from '../types';
 import { ApiService } from '../services/api';
 
 function isApiError(err: unknown): err is ApiError {
-  return typeof err === 'object' && err !== null && 'status' in err && 'type' in err;
+  return (
+    typeof err === 'object' &&
+    err !== null &&
+    'status' in err &&
+    'type' in err &&
+    typeof (err as ApiError).status === 'number'
+  );
 }
 
 function stripResolution(change: SyncChange): Omit<SyncChange, 'resolved' | 'resolution' | 'custom_value'> {
@@ -32,7 +38,7 @@ interface SyncStoreState {
   syncHistory: Record<string, SyncEvent[]>;
 
   // Actions
-  fetchSyncData: (integrationId: string, applicationId: ApplicationId) => Promise<void>;
+  fetchSyncData: (integrationId: string, applicationId: ApplicationId) => Promise<{ hasConflicts: boolean }>;
   resolveChange: (integrationId: string, changeId: string, resolution: SyncChange['resolution'], customValue?: SyncChange['custom_value']) => void;
   bulkResolve: (integrationId: string, resolution: 'keep_current' | 'accept_new') => void;
   bulkResolveAll: (resolution: 'keep_current' | 'accept_new') => void;
@@ -60,6 +66,7 @@ export const useSyncStore = create<SyncStoreState>((set, get) => ({
       const data = await ApiService.fetchSyncData(applicationId);
       const changes = data.sync_approval.changes;
 
+      const hasConflicts = changes.length > 0;
       set((state) => ({
         syncData: {
           ...state.syncData,
@@ -67,11 +74,12 @@ export const useSyncStore = create<SyncStoreState>((set, get) => ({
             isLoading: false,
             error: null,
             changes,
-            hasConflicts: changes.length > 0,
-            canApply: changes.length === 0,
+            hasConflicts,
+            canApply: !hasConflicts,
           },
         },
       }));
+      return { hasConflicts };
     } catch (error) {
       const apiError: ApiError = isApiError(error)
         ? error

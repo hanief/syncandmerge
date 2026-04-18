@@ -11,6 +11,7 @@ import { ConflictResolution } from "../components/ConflictResolution"
 import { SyncHistory } from "../components/SyncHistory"
 import { StatusBadge } from "../components/StatusBadge"
 import { Toast } from "../components/Toast"
+import { BulkResolutionActions } from "../components/BulkResolutionActions"
 import { formatDate } from "../utils/format"
 import { createSyncEvent } from "../utils/syncEvent"
 import type { ApplicationId } from "../types"
@@ -258,24 +259,11 @@ export function IntegrationDetail() {
         <div className="fixed bottom-0 left-0 md:left-64 right-0 z-50 bg-surface border-t border-outline-variant">
           <div className="max-w-7xl mx-auto px-8 py-4 flex items-center gap-3">
             <div className="flex items-center gap-2 flex-1">
-              <button
-                onClick={() => bulkResolve(integration.id, "keep_current")}
-                className="px-4 py-2.5 rounded-lg font-label text-xs font-medium text-on-surface-variant hover:bg-surface-container-high transition-colors border border-outline-variant"
-              >
-                Accept All Local
-              </button>
-              <button
-                onClick={() => bulkResolve(integration.id, "accept_new")}
-                className="px-4 py-2.5 rounded-lg font-label text-xs font-medium text-on-surface-variant hover:bg-surface-container-high transition-colors border border-outline-variant"
-              >
-                Accept All External
-              </button>
-              <button
-                onClick={() => resetResolutions(integration.id)}
-                className="px-4 py-2.5 rounded-lg font-label text-xs font-medium text-on-surface-variant hover:bg-surface-container-high transition-colors border border-outline-variant"
-              >
-                Reset
-              </button>
+              <BulkResolutionActions
+                onKeepLocal={() => bulkResolve(integration.id, "keep_current")}
+                onAcceptExternal={() => bulkResolve(integration.id, "accept_new")}
+                onReset={() => resetResolutions(integration.id)}
+              />
             </div>
             <button
               onClick={handleApplyChanges}

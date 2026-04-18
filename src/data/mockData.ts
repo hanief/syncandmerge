@@ -1,4 +1,4 @@
-import type { Integration, SyncEvent, User, Door, Key } from "../types"
+import type { Integration } from "../types"
 
 // Mock Integrations
 export const mockIntegrations: Integration[] = [
@@ -64,35 +64,6 @@ export const mockIntegrations: Integration[] = [
   },
 ]
 
-// Mock Sync History
-export const mockSyncHistory: SyncEvent[] = []
-
-// Mock Users
-export const mockUsers: User[] = []
-
-// Mock Doors
-export const mockDoors: Door[] = []
-
-// Mock Keys
-export const mockKeys: Key[] = []
-
-// Helper function to get integration by ID
 export function getIntegrationById(id: string): Integration | undefined {
   return mockIntegrations.find((integration) => integration.id === id)
-}
-
-// Helper function to get integration by application_id
-export function getIntegrationByAppId(appId: string): Integration | undefined {
-  return mockIntegrations.find(
-    (integration) => integration.application_id === appId,
-  )
-}
-
-// Helper function to get sync history for an integration
-export function getSyncHistoryByIntegrationId(
-  integrationId: string,
-): SyncEvent[] {
-  return mockSyncHistory.filter(
-    (event) => event.integration_id === integrationId,
-  )
 }

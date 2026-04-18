@@ -1,87 +1,21 @@
 import { useNavigate } from "react-router-dom"
-import { useIntegrationStore } from "../stores/integrationStore"
 import { useSyncStore } from "../stores/syncStore"
 import { useToast } from "../hooks/useToast"
+import { useConflictActions } from "../hooks/useConflictActions"
 import { Toast } from "../components/Toast"
 import { ConflictResolution } from "../components/ConflictResolution"
-import { createSyncEvent } from "../utils/syncEvent"
+import { BulkResolutionActions } from "../components/BulkResolutionActions"
 
 export function Conflicts() {
   const navigate = useNavigate()
   const { toast, showToast, hideToast } = useToast()
-  const { integrations, updateIntegrationStatus, updateIntegration } =
-    useIntegrationStore()
-  const {
-    syncData,
-    resolveChange,
-    bulkResolve,
-    bulkResolveAll,
-    resetResolutions,
-    resetResolutionsAll,
-    resetIntegration,
-    appendHistoryEvent,
-  } = useSyncStore()
+  const { resolveChange, bulkResolve, bulkResolveAll, resetResolutions, resetResolutionsAll } = useSyncStore()
 
-  // Only integrations with pending changes
-  const conflictGroups = integrations
-    .map((integration) => ({
-      integration,
-      data: syncData[integration.id],
-    }))
-    .filter(({ data }) => data && data.changes.length > 0)
-
-  const totalChanges = conflictGroups.reduce(
-    (sum, { data }) => sum + data.changes.length,
-    0,
-  )
-  const totalResolved = conflictGroups.reduce(
-    (sum, { data }) => sum + data.changes.filter((c) => c.resolved).length,
-    0,
-  )
-  const allResolved = totalChanges > 0 && totalResolved === totalChanges
-
-  const applyIntegration = (integrationId: string) => {
-    const integration = integrations.find((i) => i.id === integrationId)
-    const data = syncData[integrationId]
-    if (!integration || !data) return
-
-    if (!data.canApply) {
-      showToast("Resolve all conflicts in this integration first", "warning")
-      return
-    }
-
-    appendHistoryEvent(
-      integration.id,
-      createSyncEvent({ integration, changes: data.changes }),
-    )
-    updateIntegrationStatus(integration.id, "synced")
-    resetIntegration(integration.id)
-    showToast(
-      `Applied ${data.changes.length} changes for ${integration.application_name}`,
-      "success",
-    )
-  }
-
-  const applyAll = () => {
-    if (!allResolved) {
-      showToast("Resolve all conflicts before applying", "warning")
-      return
-    }
-
-    conflictGroups.forEach(({ integration, data }) => {
-      appendHistoryEvent(
-        integration.id,
-        createSyncEvent({ integration, changes: data.changes }),
-      )
-      updateIntegration(integration.id, { status: "synced" })
-      resetIntegration(integration.id)
+  const { conflictGroups, totalChanges, totalResolved, allResolved, applyIntegration, applyAll } =
+    useConflictActions({
+      onSuccess: (msg) => showToast(msg, "success"),
+      onWarning: (msg) => showToast(msg, "warning"),
     })
-
-    showToast(
-      `Applied all changes across ${conflictGroups.length} integrations`,
-      "success",
-    )
-  }
 
   if (conflictGroups.length === 0) {
     return (
@@ -167,24 +101,14 @@ export function Conflicts() {
                 </button>
 
                 <div className="flex items-center gap-2 flex-wrap">
-                  <button
-                    onClick={() => bulkResolve(integration.id, "keep_current")}
-                    className="px-3 py-1.5 rounded-lg font-label text-xs font-medium text-on-surface-variant hover:bg-surface-container-high transition-colors border border-outline-variant"
-                  >
-                    All Local
-                  </button>
-                  <button
-                    onClick={() => bulkResolve(integration.id, "accept_new")}
-                    className="px-3 py-1.5 rounded-lg font-label text-xs font-medium text-on-surface-variant hover:bg-surface-container-high transition-colors border border-outline-variant"
-                  >
-                    All External
-                  </button>
-                  <button
-                    onClick={() => resetResolutions(integration.id)}
-                    className="px-3 py-1.5 rounded-lg font-label text-xs font-medium text-on-surface-variant hover:bg-surface-container-high transition-colors border border-outline-variant"
-                  >
-                    Reset
-                  </button>
+                  <BulkResolutionActions
+                    compact
+                    localLabel="All Local"
+                    externalLabel="All External"
+                    onKeepLocal={() => bulkResolve(integration.id, "keep_current")}
+                    onAcceptExternal={() => bulkResolve(integration.id, "accept_new")}
+                    onReset={() => resetResolutions(integration.id)}
+                  />
                   <button
                     onClick={() => applyIntegration(integration.id)}
                     disabled={!groupCanApply}
@@ -222,24 +146,12 @@ export function Conflicts() {
       <div className="fixed bottom-0 left-0 md:left-64 right-0 z-50 bg-surface border-t border-outline-variant">
         <div className="max-w-7xl mx-auto px-8 py-4 flex items-center gap-3">
           <div className="flex items-center gap-2 flex-1 flex-wrap">
-            <button
-              onClick={() => bulkResolveAll("keep_current")}
-              className="px-4 py-2.5 rounded-lg font-label text-xs font-medium text-on-surface-variant hover:bg-surface-container-high transition-colors border border-outline-variant"
-            >
-              Accept All Local
-            </button>
-            <button
-              onClick={() => bulkResolveAll("accept_new")}
-              className="px-4 py-2.5 rounded-lg font-label text-xs font-medium text-on-surface-variant hover:bg-surface-container-high transition-colors border border-outline-variant"
-            >
-              Accept All External
-            </button>
-            <button
-              onClick={resetResolutionsAll}
-              className="px-4 py-2.5 rounded-lg font-label text-xs font-medium text-on-surface-variant hover:bg-surface-container-high transition-colors border border-outline-variant"
-            >
-              Reset All
-            </button>
+            <BulkResolutionActions
+              resetLabel="Reset All"
+              onKeepLocal={() => bulkResolveAll("keep_current")}
+              onAcceptExternal={() => bulkResolveAll("accept_new")}
+              onReset={resetResolutionsAll}
+            />
           </div>
           <button
             onClick={applyAll}

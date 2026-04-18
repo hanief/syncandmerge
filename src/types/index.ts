@@ -1,37 +1,3 @@
-// Entity Types
-export interface User {
-  id: string
-  name: string
-  email: string
-  phone: string
-  role: string
-  status: "active" | "suspended"
-  created_at: string
-  updated_at: string
-}
-
-export interface Door {
-  id: string
-  name: string
-  location: string
-  device_id: string
-  status: "online" | "offline"
-  battery_level: number
-  last_seen: string
-  created_at: string
-}
-
-export interface Key {
-  id: string
-  user_id: string
-  door_id: string
-  key_type: string
-  access_start: string
-  access_end: string
-  status: "active" | "revoked"
-  created_at: string
-}
-
 // Integration Types
 export type IntegrationStatus =
   | "synced"
@@ -64,7 +30,8 @@ export interface Integration {
 // Sync Change Types
 export type ChangeType = "ADD" | "UPDATE" | "DELETE"
 
-export type SyncValue = string | number | boolean | null | Record<string, unknown> | unknown[]
+export interface SyncValueObject { [key: string]: SyncValue }
+export type SyncValue = string | number | boolean | null | SyncValueObject | SyncValue[]
 
 export interface SyncChange {
   id: string
