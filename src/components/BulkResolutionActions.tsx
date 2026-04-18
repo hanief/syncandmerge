@@ -23,9 +23,15 @@ export function BulkResolutionActions({
 
   return (
     <>
-      <button onClick={onKeepLocal} className={cls}>{localLabel}</button>
-      <button onClick={onAcceptExternal} className={cls}>{externalLabel}</button>
-      <button onClick={onReset} className={cls}>{resetLabel}</button>
+      <button onClick={onKeepLocal} className={cls}>
+        {localLabel}
+      </button>
+      <button onClick={onReset} className={cls}>
+        {resetLabel}
+      </button>
+      <button onClick={onAcceptExternal} className={cls}>
+        {externalLabel}
+      </button>
     </>
   )
 }

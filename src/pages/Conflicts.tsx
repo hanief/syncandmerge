@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom"
-import { useSyncStore } from "../stores/syncStore"
 import { useToast } from "../hooks/useToast"
 import {
   useApplyConflicts,
@@ -7,18 +6,12 @@ import {
 } from "../hooks/useConflictActions"
 import { Toast } from "../components/Toast"
 import { ConflictResolution } from "../components/ConflictResolution"
-import { BulkResolutionActions } from "../components/BulkResolutionActions"
+import { useSyncStore } from "../stores/syncStore"
 
 export function Conflicts() {
   const navigate = useNavigate()
   const { toast, showToast, hideToast } = useToast()
-  const {
-    resolveChange,
-    bulkResolve,
-    bulkResolveAll,
-    resetResolutions,
-    resetResolutionsAll,
-  } = useSyncStore()
+  const resolveChange = useSyncStore((state) => state.resolveChange)
 
   const { conflictGroups, totalChanges, totalResolved, allResolved } =
     useConflictStats()
@@ -107,35 +100,22 @@ export function Conflicts() {
                   </div>
                 </button>
 
-                <div className="flex items-center gap-2 flex-wrap">
-                  <BulkResolutionActions
-                    compact
-                    localLabel="All Local"
-                    externalLabel="All External"
-                    onKeepLocal={() =>
-                      bulkResolve(integration.id, "keep_current")
-                    }
-                    onAcceptExternal={() =>
-                      bulkResolve(integration.id, "accept_new")
-                    }
-                    onReset={() => resetResolutions(integration.id)}
-                  />
-                  <button
-                    onClick={() => applyIntegration(integration.id)}
-                    disabled={!groupCanApply}
-                    className={`px-4 py-1.5 rounded-lg font-label text-xs font-bold transition-colors ${
-                      groupCanApply
-                        ? "bg-on-tertiary-container text-on-primary hover:opacity-90"
-                        : "bg-surface-container text-on-surface-variant cursor-not-allowed"
-                    }`}
-                  >
-                    Apply
-                  </button>
-                </div>
+                <button
+                  onClick={() => applyIntegration(integration.id)}
+                  disabled={!groupCanApply}
+                  className={`px-4 py-1.5 rounded-lg font-label text-xs font-bold transition-colors ${
+                    groupCanApply
+                      ? "bg-on-tertiary-container text-on-primary hover:opacity-90"
+                      : "bg-surface-container text-on-surface-variant cursor-not-allowed"
+                  }`}
+                >
+                  Apply
+                </button>
               </div>
 
-              <div className="p-4">
+              <div>
                 <ConflictResolution
+                  integrationId={integration.id}
                   changes={data.changes}
                   onResolve={(changeId, resolution, customValue) =>
                     resolveChange(
@@ -153,15 +133,7 @@ export function Conflicts() {
       </div>
 
       <div className="fixed bottom-0 left-0 md:left-64 right-0 z-50 bg-surface border-t border-outline-variant">
-        <div className="max-w-7xl mx-auto px-8 py-4 flex items-center gap-3">
-          <div className="flex items-center gap-2 flex-1 flex-wrap">
-            <BulkResolutionActions
-              resetLabel="Reset All"
-              onKeepLocal={() => bulkResolveAll("keep_current")}
-              onAcceptExternal={() => bulkResolveAll("accept_new")}
-              onReset={resetResolutionsAll}
-            />
-          </div>
+        <div className="max-w-7xl mx-auto px-8 py-4 flex items-center justify-end gap-3">
           <button
             onClick={applyAll}
             disabled={!allResolved}

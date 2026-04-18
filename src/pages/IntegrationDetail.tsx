@@ -18,7 +18,6 @@ import { ConflictResolution } from "../components/ConflictResolution"
 import { SyncHistory } from "../components/SyncHistory"
 import { StatusBadge } from "../components/StatusBadge"
 import { Toast } from "../components/Toast"
-import { BulkResolutionActions } from "../components/BulkResolutionActions"
 import { formatDate } from "../utils/format"
 import { createSyncEvent } from "../utils/syncEvent"
 import { pluralize } from "../utils/format"
@@ -33,8 +32,6 @@ export function IntegrationDetail() {
     (state) => state.updateIntegrationStatus,
   )
   const resolveChange = useSyncStore((state) => state.resolveChange)
-  const bulkResolve = useSyncStore((state) => state.bulkResolve)
-  const resetResolutions = useSyncStore((state) => state.resetResolutions)
   const resetIntegration = useSyncStore((state) => state.resetIntegration)
   const appendHistoryEvent = useSyncStore((state) => state.appendHistoryEvent)
 
@@ -85,7 +82,10 @@ export function IntegrationDetail() {
       return
     }
 
-    appendHistoryEvent(integration.id, createSyncEvent({ integration, changes }))
+    appendHistoryEvent(
+      integration.id,
+      createSyncEvent({ integration, changes }),
+    )
     updateIntegrationStatus(integration.id, "synced")
     showToast(
       `Successfully applied ${changes.length} ${pluralize(changes.length, "change")} to ${integration.application_name}`,
@@ -155,7 +155,7 @@ export function IntegrationDetail() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 mx-auto md:mx-0">
             <button
               onClick={handleSyncNow}
               disabled={syncMutation.isPending}
@@ -188,6 +188,7 @@ export function IntegrationDetail() {
         ) : (
           <ResolveView
             key="resolve"
+            integrationId={integration.id}
             isLoading={isLoading}
             changes={changes}
             onResolve={(changeId, resolution, customValue) =>
@@ -199,14 +200,7 @@ export function IntegrationDetail() {
 
       {showBottomBar && (
         <div className="fixed bottom-0 left-0 md:left-64 right-0 z-50 bg-surface border-t border-outline-variant">
-          <div className="max-w-7xl mx-auto px-8 py-4 flex items-center gap-3">
-            <div className="flex items-center gap-2 flex-1">
-              <BulkResolutionActions
-                onKeepLocal={() => bulkResolve(integration.id, "keep_current")}
-                onAcceptExternal={() => bulkResolve(integration.id, "accept_new")}
-                onReset={() => resetResolutions(integration.id)}
-              />
-            </div>
+          <div className="max-w-7xl mx-auto px-8 py-4 flex items-center justify-end gap-3">
             <button
               onClick={handleApplyChanges}
               disabled={!canApply}
@@ -268,12 +262,18 @@ function OverviewView({ error, history, onRetry }: OverviewViewProps) {
 }
 
 interface ResolveViewProps {
+  integrationId: string
   isLoading: boolean
   changes: ReturnType<typeof useSyncDataFor>["changes"]
   onResolve: React.ComponentProps<typeof ConflictResolution>["onResolve"]
 }
 
-function ResolveView({ isLoading, changes, onResolve }: ResolveViewProps) {
+function ResolveView({
+  integrationId,
+  isLoading,
+  changes,
+  onResolve,
+}: ResolveViewProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -283,7 +283,11 @@ function ResolveView({ isLoading, changes, onResolve }: ResolveViewProps) {
       {isLoading ? (
         <LoadingSpinner message="Fetching sync data..." />
       ) : (
-        <ConflictResolution changes={changes} onResolve={onResolve} />
+        <ConflictResolution
+          integrationId={integrationId}
+          changes={changes}
+          onResolve={onResolve}
+        />
       )}
     </motion.div>
   )

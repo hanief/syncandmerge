@@ -56,7 +56,7 @@ function ChangeCardHeader({ change }: { change: SyncChange }) {
         {change.change_type}
       </span>
       {change.resolved && (
-        <span className="px-2 py-0.5 rounded-full bg-success-container text-on-success-container font-label text-xs font-semibold">
+        <span className="hidden md:block px-2 py-0.5 rounded-full bg-success-container text-on-success-container font-label text-xs font-semibold">
           ✓ Resolved
         </span>
       )}
@@ -117,7 +117,7 @@ function SelectableValue({
           {heading}
         </h4>
         <span
-          className={`font-label text-xs font-semibold ${selected ? "text-on-tertiary-container" : "text-on-surface-variant"}`}
+          className={`hidden md:block font-label text-xs font-semibold ${selected ? "text-on-tertiary-container" : "text-on-surface-variant"}`}
         >
           {action}
         </span>
@@ -134,7 +134,7 @@ function AddCardBody({ change, onResolve }: ChangeCardProps) {
   const accepted = change.resolution === "accept_new"
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex flex-col sm:flex-row sm:items-center gap-2">
       <div className="flex-1 bg-surface-container-highest rounded-lg p-2.5">
         <span className="font-label text-xs text-on-surface-variant mr-2">
           New:
@@ -143,20 +143,22 @@ function AddCardBody({ change, onResolve }: ChangeCardProps) {
           {renderSyncValue(change.new_value)}
         </span>
       </div>
-      <ActionButton
-        icon="block"
-        active={rejected}
-        activeClass="bg-error-container text-on-error-container"
-        label={rejected ? "✓ Rejected" : "Reject"}
-        onClick={() => onResolve(change.id, "keep_current")}
-      />
-      <ActionButton
-        icon="add_circle"
-        active={accepted}
-        activeClass="bg-on-tertiary-container text-on-primary"
-        label={accepted ? "✓ Accepted" : "Accept"}
-        onClick={() => onResolve(change.id, "accept_new")}
-      />
+      <div className="flex gap-2 w-full sm:contents">
+        <ActionButton
+          icon="block"
+          active={rejected}
+          activeClass="bg-error-container text-on-error-container"
+          label={rejected ? "✓ Rejected" : "Reject"}
+          onClick={() => onResolve(change.id, "keep_current")}
+        />
+        <ActionButton
+          icon="add_circle"
+          active={accepted}
+          activeClass="bg-on-tertiary-container text-on-primary"
+          label={accepted ? "✓ Accepted" : "Accept"}
+          onClick={() => onResolve(change.id, "accept_new")}
+        />
+      </div>
     </div>
   )
 }
@@ -166,7 +168,7 @@ function DeleteCardBody({ change, onResolve }: ChangeCardProps) {
   const deleting = change.resolution === "accept_new"
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex flex-col sm:flex-row sm:items-center gap-2">
       <div className="flex-1 bg-surface-container-highest rounded-lg p-2.5">
         <span className="font-label text-xs text-on-surface-variant mr-2">
           Current:
@@ -177,20 +179,22 @@ function DeleteCardBody({ change, onResolve }: ChangeCardProps) {
           {renderSyncValue(change.current_value)}
         </span>
       </div>
-      <ActionButton
-        icon="keep"
-        active={keeping}
-        activeClass="bg-on-tertiary-container text-on-primary"
-        label={keeping ? "✓ Keeping" : "Keep"}
-        onClick={() => onResolve(change.id, "keep_current")}
-      />
-      <ActionButton
-        icon="delete"
-        active={deleting}
-        activeClass="bg-error-container text-on-error-container"
-        label={deleting ? "✓ Deleting" : "Delete"}
-        onClick={() => onResolve(change.id, "accept_new")}
-      />
+      <div className="flex gap-2 w-full sm:contents">
+        <ActionButton
+          icon="keep"
+          active={keeping}
+          activeClass="bg-on-tertiary-container text-on-primary"
+          label={keeping ? "✓ Keeping" : "Keep"}
+          onClick={() => onResolve(change.id, "keep_current")}
+        />
+        <ActionButton
+          icon="delete"
+          active={deleting}
+          activeClass="bg-error-container text-on-error-container"
+          label={deleting ? "✓ Deleting" : "Delete"}
+          onClick={() => onResolve(change.id, "accept_new")}
+        />
+      </div>
     </div>
   )
 }
@@ -213,7 +217,7 @@ function ActionButton({
   return (
     <button
       onClick={onClick}
-      className={`px-3 py-2 rounded-lg font-label text-xs font-semibold transition-colors flex items-center gap-1.5 whitespace-nowrap ${
+      className={`px-3 py-2 rounded-lg font-label text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 whitespace-nowrap flex-1 sm:flex-none ${
         active
           ? activeClass
           : "bg-surface-container text-on-surface-variant hover:bg-surface-container-high"
