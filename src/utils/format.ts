@@ -42,11 +42,22 @@ export function formatTimestamp(dateString: string): string {
   })
 }
 
+export function pluralize(count: number, singular: string, plural?: string): string {
+  return count === 1 ? singular : (plural ?? `${singular}s`)
+}
+
 export function formatFieldName(fieldName: string): string {
   return fieldName
     .split(".")
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(" ")
+}
+
+export function filterByStatus<T extends { status: string }>(
+  items: T[],
+  status: string | "all",
+): T[] {
+  return status === "all" ? items : items.filter((item) => item.status === status)
 }
 
 export function getStatusColor(status: string): string {

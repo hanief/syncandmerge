@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
+import { MaterialIcon } from './MaterialIcon';
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
 
@@ -14,11 +15,11 @@ export function Toast({ message, type = 'info', isVisible, onClose }: ToastProps
     switch (type) {
       case 'success':
         return {
-          bg: 'bg-[#eef8f3]',
+          bg: 'bg-success-container',
           icon: 'check_circle',
-          iconColor: 'text-[#1e6041]',
-          textColor: 'text-[#113a27]',
-          border: 'border-[#22c55e]',
+          iconColor: 'text-on-success-container',
+          textColor: 'text-on-success-container-dark',
+          border: 'border-success',
         };
       case 'error':
         return {
@@ -30,11 +31,11 @@ export function Toast({ message, type = 'info', isVisible, onClose }: ToastProps
         };
       case 'warning':
         return {
-          bg: 'bg-[#fff4e6]',
+          bg: 'bg-warning-container',
           icon: 'warning',
-          iconColor: 'text-[#c55b00]',
-          textColor: 'text-[#8b4000]',
-          border: 'border-[#c55b00]',
+          iconColor: 'text-accent-orange',
+          textColor: 'text-on-warning-container',
+          border: 'border-accent-orange',
         };
       case 'info':
       default:
@@ -63,12 +64,7 @@ export function Toast({ message, type = 'info', isVisible, onClose }: ToastProps
           transition={{ duration: 0.25 }}
         >
           <div className="flex items-center gap-2">
-            <span
-              className={`material-symbols-outlined text-[16px] shrink-0 ${styles.iconColor}`}
-              style={{ fontVariationSettings: "'FILL' 1" }}
-            >
-              {styles.icon}
-            </span>
+            <MaterialIcon name={styles.icon} filled className={`text-[16px] shrink-0 ${styles.iconColor}`} />
             <p className={`font-body text-xs ${styles.textColor} flex-1`}>{message}</p>
             <button
               onClick={onClose}

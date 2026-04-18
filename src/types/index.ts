@@ -92,9 +92,35 @@ export interface SyncEvent {
   resolutions?: SyncChangeResolution[]
 }
 
-export interface ApiError {
-  status: number
-  message: string
-  type: "client_error" | "server_error" | "gateway_error" | "network_error"
-  details?: string
-}
+export type ApiError =
+  | {
+      type: "client_error"
+      status: number
+      message: string
+      details?: string
+    }
+  | {
+      type: "server_error"
+      status: number
+      message: string
+      details?: string
+    }
+  | {
+      type: "gateway_error"
+      status: number
+      message: string
+      details?: string
+      retryAfter?: number
+    }
+  | {
+      type: "timeout"
+      status: number
+      message: string
+      details?: string
+    }
+  | {
+      type: "network_error"
+      status: number
+      message: string
+      details?: string
+    }

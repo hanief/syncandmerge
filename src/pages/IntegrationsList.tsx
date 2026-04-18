@@ -3,7 +3,7 @@ import { motion } from "framer-motion"
 import { useIntegrationStore } from "../stores/integrationStore"
 import { useSyncAll } from "../hooks/useSyncAll"
 import { StatusBadge } from "../components/StatusBadge"
-import { formatDate } from "../utils/format"
+import { formatDate, filterByStatus } from "../utils/format"
 import type { Integration, IntegrationStatus } from "../types"
 
 interface FilterButtonProps {
@@ -34,10 +34,7 @@ export function IntegrationsList() {
     useIntegrationStore()
   const { syncAll, isSyncingAll } = useSyncAll()
 
-  const filteredIntegrations =
-    filter === "all"
-      ? integrations
-      : integrations.filter((integration) => integration.status === filter)
+  const filteredIntegrations = filterByStatus(integrations, filter)
 
   const handleIntegrationClick = (integration: Integration) => {
     setSelectedIntegration(integration.id)

@@ -1,3 +1,4 @@
+import { useMemo } from "react"
 import { useNavigate } from "react-router-dom"
 import { useSyncStore } from "../stores/syncStore"
 import { useIntegrationStore } from "../stores/integrationStore"
@@ -10,12 +11,16 @@ export function Logs() {
   const { syncHistory } = useSyncStore()
   const { integrations } = useIntegrationStore()
 
-  const allEvents: SyncEvent[] = Object.values(syncHistory)
-    .flat()
-    .sort(
-      (a, b) =>
-        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
-    )
+  const allEvents: SyncEvent[] = useMemo(
+    () =>
+      Object.values(syncHistory)
+        .flat()
+        .sort(
+          (a, b) =>
+            new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+        ),
+    [syncHistory],
+  )
 
   const getIntegration = (integrationId: string) =>
     integrations.find((i) => i.id === integrationId)
@@ -60,8 +65,8 @@ export function Logs() {
                     )}
                   </div>
 
-                  <div
-                    className="ml-8 bg-surface-container-low rounded-xl p-4 hover:bg-surface-container transition-colors cursor-pointer"
+                  <button
+                    className="ml-8 w-full text-left bg-surface-container-low rounded-xl p-4 hover:bg-surface-container transition-colors"
                     onClick={() => navigate(`/logs/${event.id}`)}
                   >
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
@@ -127,7 +132,7 @@ export function Logs() {
                         {event.details}
                       </p>
                     )}
-                  </div>
+                  </button>
                 </div>
               )
             })}

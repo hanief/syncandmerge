@@ -46,3 +46,17 @@ export const useIntegrationStore = create<IntegrationState>((set, get) => ({
     }))
   },
 }))
+
+export function useIntegrationById(
+  id: string | undefined,
+): Integration | undefined {
+  return useIntegrationStore((state) =>
+    id ? state.integrations.find((integration) => integration.id === id) : undefined,
+  )
+}
+
+export function useIsAnySyncing(): boolean {
+  return useIntegrationStore((state) =>
+    state.integrations.some((integration) => integration.status === "syncing"),
+  )
+}

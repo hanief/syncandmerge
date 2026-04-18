@@ -9,7 +9,10 @@ describe("StatusBadge", () => {
     ["syncing", "Syncing"],
     ["error", "Error"],
     ["not_synced", "Not Synced"],
-  ])('renders "%s" label for status "%s"', (status, expectedLabel) => {
+    ["success", "Synced"],
+    ["failed", "Failed"],
+    ["partial", "Partial"],
+  ] as const)('renders "%s" label for status "%s"', (status, expectedLabel) => {
     render(<StatusBadge status={status} />)
     expect(screen.getByText(expectedLabel)).toBeInTheDocument()
   })
@@ -22,10 +25,5 @@ describe("StatusBadge", () => {
   it("does not render count when count is 0", () => {
     render(<StatusBadge status="synced" count={0} />)
     expect(screen.queryByText("(0)")).not.toBeInTheDocument()
-  })
-
-  it("renders the raw status string for an unknown status", () => {
-    render(<StatusBadge status="custom_status" />)
-    expect(screen.getByText("custom_status")).toBeInTheDocument()
   })
 })

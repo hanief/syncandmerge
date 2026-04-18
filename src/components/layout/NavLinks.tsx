@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom"
 import { motion } from "framer-motion"
 import { useSyncStore } from "../../stores/syncStore"
+import { MaterialIcon } from "../MaterialIcon"
 
 interface NavLinksProps {
   orientation?: "vertical" | "horizontal"
@@ -22,6 +23,9 @@ export function NavLinks({ orientation = "vertical" }: NavLinksProps) {
   const inactive =
     "text-on-surface-variant hover:bg-surface hover:text-on-surface"
 
+  const iconSize = orientation === "horizontal" ? "text-[16px]" : "text-[20px]"
+  const labelSize = orientation === "horizontal" ? "text-xs" : "text-sm"
+
   return (
     <>
       <NavLink
@@ -31,17 +35,8 @@ export function NavLinks({ orientation = "vertical" }: NavLinksProps) {
       >
         {({ isActive }) => (
           <div className="flex items-center gap-2">
-            <span
-              className={`material-symbols-outlined ${orientation === "horizontal" ? "text-[16px]" : "text-[20px]"}`}
-              style={{
-                fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0",
-              }}
-            >
-              dashboard
-            </span>
-            <span
-              className={`font-label ${orientation === "horizontal" ? "text-xs" : "text-sm"} ${isActive ? "font-semibold" : "font-medium"}`}
-            >
+            <MaterialIcon name="dashboard" filled={isActive} className={iconSize} />
+            <span className={`font-label ${labelSize} ${isActive ? "font-semibold" : "font-medium"}`}>
               Integrations
             </span>
           </div>
@@ -57,17 +52,8 @@ export function NavLinks({ orientation = "vertical" }: NavLinksProps) {
         {({ isActive }) => (
           <>
             <div className="flex items-center gap-2">
-              <span
-                className={`material-symbols-outlined ${orientation === "horizontal" ? "text-[16px]" : "text-[20px]"}`}
-                style={{
-                  fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0",
-                }}
-              >
-                table_rows
-              </span>
-              <span
-                className={`font-label ${orientation === "horizontal" ? "text-xs" : "text-sm"} ${isActive ? "font-semibold" : "font-medium"}`}
-              >
+              <MaterialIcon name="table_rows" filled={isActive} className={iconSize} />
+              <span className={`font-label ${labelSize} ${isActive ? "font-semibold" : "font-medium"}`}>
                 Conflicts
               </span>
             </div>
@@ -91,17 +77,8 @@ export function NavLinks({ orientation = "vertical" }: NavLinksProps) {
       >
         {({ isActive }) => (
           <div className="flex items-center gap-2">
-            <span
-              className={`material-symbols-outlined ${orientation === "horizontal" ? "text-[16px]" : "text-[20px]"}`}
-              style={{
-                fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0",
-              }}
-            >
-              history
-            </span>
-            <span
-              className={`font-label ${orientation === "horizontal" ? "text-xs" : "text-sm"} ${isActive ? "font-semibold" : "font-medium"}`}
-            >
+            <MaterialIcon name="history" filled={isActive} className={iconSize} />
+            <span className={`font-label ${labelSize} ${isActive ? "font-semibold" : "font-medium"}`}>
               Logs
             </span>
           </div>

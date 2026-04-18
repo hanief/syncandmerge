@@ -2,22 +2,30 @@ import { create } from "zustand"
 import type { SyncChange, SyncEvent, ApiError, ApplicationId } from "../types"
 import { ApiService } from "../services/api"
 
-function isApiError(err: unknown): err is ApiError {
+function isApiError(value: unknown): value is ApiError {
   return (
-    typeof err === "object" &&
-    err !== null &&
-    "status" in err &&
-    "type" in err &&
-    typeof (err as ApiError).status === "number"
+    typeof value === "object" &&
+    value !== null &&
+    "status" in value &&
+    "type" in value &&
+    "message" in value
   )
 }
 
 function stripResolution(
   change: SyncChange,
 ): Omit<SyncChange, "resolved" | "resolution" | "custom_value"> {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { resolved, resolution, custom_value, ...rest } = change
-  return rest
+  const copy = { ...change }
+  delete copy.resolved
+  delete copy.resolution
+  delete copy.custom_value
+  return copy
+}
+
+function removeKey<T>(record: Record<string, T>, key: string): Record<string, T> {
+  const copy = { ...record }
+  delete copy[key]
+  return copy
 }
 
 interface PerIntegrationSyncData {
@@ -28,13 +36,15 @@ interface PerIntegrationSyncData {
   canApply: boolean
 }
 
-const defaultSyncData: PerIntegrationSyncData = {
+export const defaultSyncData: PerIntegrationSyncData = {
   isLoading: false,
   error: null,
   changes: [],
   hasConflicts: false,
   canApply: false,
 }
+
+const EMPTY_HISTORY: SyncEvent[] = []
 
 interface SyncStoreState {
   syncData: Record<string, PerIntegrationSyncData>
@@ -97,9 +107,9 @@ export const useSyncStore = create<SyncStoreState>((set, get) => ({
       const apiError: ApiError = isApiError(error)
         ? error
         : {
+            type: "network_error",
             status: 0,
             message: "An unexpected error occurred",
-            type: "network_error",
           }
       set((state) => ({
         syncData: {
@@ -113,7 +123,7 @@ export const useSyncStore = create<SyncStoreState>((set, get) => ({
           },
         },
       }))
-      throw error
+      throw apiError
     }
   },
 
@@ -217,11 +227,7 @@ export const useSyncStore = create<SyncStoreState>((set, get) => ({
   },
 
   resetIntegration: (integrationId) => {
-    set((state) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { [integrationId]: removed, ...rest } = state.syncData
-      return { syncData: rest }
-    })
+    set((state) => ({ syncData: removeKey(state.syncData, integrationId) }))
   },
 
   appendHistoryEvent: (integrationId, event) => {
@@ -243,3 +249,17 @@ export const useSyncStore = create<SyncStoreState>((set, get) => ({
       .find((event) => event.id === eventId)
   },
 }))
+
+export function useSyncDataFor(
+  integrationId: string | undefined,
+): PerIntegrationSyncData {
+  return useSyncStore((state) =>
+    integrationId ? (state.syncData[integrationId] ?? defaultSyncData) : defaultSyncData,
+  )
+}
+
+export function useHistoryFor(integrationId: string | undefined): SyncEvent[] {
+  return useSyncStore((state) =>
+    integrationId ? (state.syncHistory[integrationId] ?? EMPTY_HISTORY) : EMPTY_HISTORY,
+  )
+}

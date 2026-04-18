@@ -2,17 +2,22 @@ import { motion } from 'framer-motion';
 
 import type { IntegrationStatus } from '../types'
 
-type StatusBadgeStatus = IntegrationStatus | 'success' | 'failed' | 'partial'
+export type StatusBadgeStatus =
+  | IntegrationStatus
+  | 'success'
+  | 'failed'
+  | 'partial'
 
 interface StatusBadgeProps {
-  status: StatusBadgeStatus | string;
+  status: StatusBadgeStatus;
   count?: number;
 }
 
 export function StatusBadge({ status, count }: StatusBadgeProps) {
   const getStatusStyles = () => {
-    switch (status.toLowerCase()) {
+    switch (status) {
       case 'synced':
+      case 'success':
         return {
           container: 'bg-[#dcfce7] text-[#166534]',
           icon: <span className="w-1.5 h-1.5 rounded-full bg-[#16a34a]" />,
@@ -42,11 +47,17 @@ export function StatusBadge({ status, count }: StatusBadgeProps) {
           icon: <span className="material-symbols-outlined text-[14px]">pause_circle</span>,
           label: 'Not Synced'
         };
-      default:
+      case 'failed':
         return {
-          container: 'bg-surface-variant text-on-surface-variant',
-          icon: <span className="w-1.5 h-1.5 rounded-full bg-on-surface-variant" />,
-          label: status
+          container: 'bg-error-container text-on-error-container',
+          icon: <span className="material-symbols-outlined text-[14px]">cancel</span>,
+          label: 'Failed'
+        };
+      case 'partial':
+        return {
+          container: 'bg-[#fff7ed] text-[#9a3412]',
+          icon: <span className="material-symbols-outlined text-[14px]">warning</span>,
+          label: 'Partial'
         };
     }
   };

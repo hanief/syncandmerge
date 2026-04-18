@@ -43,6 +43,13 @@
   --color-accent-orange: #c55b00;
   --color-on-accent-orange: #ffffff;
 
+  --color-success: #22c55e;
+  --color-success-container: #eef8f3;
+  --color-on-success-container: #1e6041;
+  --color-on-success-container-dark: #113a27;
+  --color-warning-container: #fff4e6;
+  --color-on-warning-container: #8b4000;
+
   --font-family-headline: Poppins, system-ui, -apple-system, sans-serif;
   --font-family-body: Poppins, system-ui, -apple-system, sans-serif;
   --font-family-label: Poppins, system-ui, -apple-system, sans-serif;

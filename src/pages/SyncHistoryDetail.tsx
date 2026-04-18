@@ -154,8 +154,8 @@ export function SyncHistoryDetail() {
           </div>
 
           <div className="space-y-3">
-            {event.resolutions.map((resolution, index) => (
-              <ResolutionRow key={index} resolution={resolution} />
+            {event.resolutions.map((resolution) => (
+              <ResolutionRow key={`${resolution.field_name}-${resolution.change_type}`} resolution={resolution} />
             ))}
           </div>
         </div>

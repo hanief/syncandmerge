@@ -2,6 +2,7 @@ import type { SyncChange } from "../types"
 import { formatFieldName } from "../utils/format"
 import { renderSyncValue } from "../utils/syncValue"
 import { CHANGE_STYLES, CHANGE_ICON } from "../constants/changeStyles"
+import { MaterialIcon } from "./MaterialIcon"
 
 interface SyncPreviewProps {
   changes: SyncChange[]
@@ -36,12 +37,11 @@ export function SyncPreview({ changes }: SyncPreviewProps) {
               className="bg-surface-container-low rounded-xl p-4 hover:bg-surface-container transition-colors"
             >
               <div className="flex items-center gap-3 mb-3">
-                <span
-                  className={`material-symbols-outlined text-[20px] ${styles.icon}`}
-                  style={{ fontVariationSettings: "'FILL' 1" }}
-                >
-                  {CHANGE_ICON[change.change_type]}
-                </span>
+                <MaterialIcon
+                  name={CHANGE_ICON[change.change_type]}
+                  filled
+                  className={`text-[20px] ${styles.icon}`}
+                />
                 <span
                   className={`px-2.5 py-1 rounded-full ${styles.badge} font-label text-xs font-semibold uppercase tracking-wide`}
                 >

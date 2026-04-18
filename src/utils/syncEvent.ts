@@ -23,12 +23,15 @@ export function createSyncEvent({ integration, changes }: CreateSyncEventParams)
       resolved_by: SYSTEM_USER,
     }))
 
+  const allResolved = changes.length > 0 && changes.every((c) => c.resolved)
+  const status = allResolved ? "success" : changes.length === 0 ? "success" : "partial"
+
   return {
     id: `sync-${now.getTime()}-${integration.id}`,
     integration_id: integration.id,
     application_name: integration.application_name,
     timestamp: now.toISOString(),
-    status: 'success',
+    status,
     changes_applied: changes.length,
     conflicts_resolved: resolutions.length,
     version: integration.version,

@@ -1,8 +1,15 @@
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
-import { useIntegrationStore } from "../stores/integrationStore"
-import { useSyncStore } from "../stores/syncStore"
+import {
+  useIntegrationById,
+  useIntegrationStore,
+} from "../stores/integrationStore"
+import {
+  useSyncStore,
+  useSyncDataFor,
+  useHistoryFor,
+} from "../stores/syncStore"
 import { useSyncMutation } from "../hooks/useSyncMutation"
 import { useToast } from "../hooks/useToast"
 import { LoadingSpinner } from "../components/LoadingSpinner"
@@ -14,48 +21,33 @@ import { Toast } from "../components/Toast"
 import { BulkResolutionActions } from "../components/BulkResolutionActions"
 import { formatDate } from "../utils/format"
 import { createSyncEvent } from "../utils/syncEvent"
-import type { ApplicationId } from "../types"
-
-type ViewMode = "overview" | "resolve"
+import { pluralize } from "../utils/format"
 
 export function IntegrationDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { toast, showToast, hideToast } = useToast()
 
-  const { getIntegrationById, updateIntegrationStatus } = useIntegrationStore()
-  const {
-    getSyncData,
-    resolveChange,
-    bulkResolve,
-    resetResolutions,
-    resetIntegration,
-    appendHistoryEvent,
-    syncHistory,
-  } = useSyncStore()
+  const integration = useIntegrationById(id)
+  const updateIntegrationStatus = useIntegrationStore(
+    (state) => state.updateIntegrationStatus,
+  )
+  const resolveChange = useSyncStore((state) => state.resolveChange)
+  const bulkResolve = useSyncStore((state) => state.bulkResolve)
+  const resetResolutions = useSyncStore((state) => state.resetResolutions)
+  const resetIntegration = useSyncStore((state) => state.resetIntegration)
+  const appendHistoryEvent = useSyncStore((state) => state.appendHistoryEvent)
+
+  const syncData = useSyncDataFor(id)
+  const history = useHistoryFor(id)
   const syncMutation = useSyncMutation()
 
-  const integration = id ? getIntegrationById(id) : undefined
-  const syncData = id ? getSyncData(id) : undefined
-  const { isLoading, error, changes, hasConflicts, canApply } = syncData ?? {
-    isLoading: false,
-    error: null,
-    changes: [],
-    hasConflicts: false,
-    canApply: false,
-  }
-  const history = id ? (syncHistory[id] ?? []) : []
-
-  const [viewMode, setViewMode] = useState<ViewMode>(() => {
-    if (!id) return "overview"
-    const existing = useSyncStore.getState().getSyncData(id)
-    return existing.changes.length > 0 ? "resolve" : "overview"
-  })
+  const { isLoading, error, changes, hasConflicts, canApply } = syncData
+  const viewMode: "overview" | "resolve" =
+    isLoading || changes.length > 0 ? "resolve" : "overview"
 
   useEffect(() => {
-    if (!integration) {
-      navigate("/")
-    }
+    if (!integration) navigate("/")
   }, [integration, navigate])
 
   if (!integration) {
@@ -63,11 +55,10 @@ export function IntegrationDetail() {
   }
 
   const handleSyncNow = async () => {
-    if (!integration || !integration.application_id) {
+    if (!integration.application_id) {
       showToast("Invalid application ID", "error")
       return
     }
-
     if (syncMutation.isPending) {
       showToast("Sync already in progress", "warning")
       return
@@ -76,13 +67,11 @@ export function IntegrationDetail() {
     try {
       await syncMutation.mutateAsync({
         integrationId: integration.id,
-        applicationId: integration.application_id as ApplicationId,
+        applicationId: integration.application_id,
       })
       showToast("Sync data fetched successfully", "success")
-      setViewMode("resolve")
     } catch {
       showToast("Sync failed. Please try again.", "error")
-      setViewMode("overview")
     }
   }
 
@@ -91,92 +80,23 @@ export function IntegrationDetail() {
       showToast("No changes to apply", "warning")
       return
     }
-
     if (hasConflicts && !canApply) {
       showToast("Please resolve all conflicts before applying", "warning")
       return
     }
 
-    appendHistoryEvent(
-      integration.id,
-      createSyncEvent({ integration, changes }),
-    )
+    appendHistoryEvent(integration.id, createSyncEvent({ integration, changes }))
     updateIntegrationStatus(integration.id, "synced")
     showToast(
-      `Successfully applied ${changes.length} change${changes.length !== 1 ? "s" : ""} to ${integration.application_name}`,
+      `Successfully applied ${changes.length} ${pluralize(changes.length, "change")} to ${integration.application_name}`,
       "success",
     )
     resetIntegration(integration.id)
-    setViewMode("overview")
   }
 
   const handleCancel = () => {
     updateIntegrationStatus(integration.id, "synced")
     resetIntegration(integration.id)
-    setViewMode("overview")
-  }
-
-  const renderContent = () => {
-    if (viewMode === "overview") {
-      return (
-        <motion.div
-          key="overview"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="flex flex-col gap-6"
-        >
-          {error ? (
-            <ErrorMessage
-              error={error}
-              onRetry={() =>
-                syncMutation.mutate({
-                  integrationId: integration.id,
-                  applicationId: integration.application_id as ApplicationId,
-                })
-              }
-            />
-          ) : (
-            <div className="bg-surface-container-lowest rounded-2xl p-6 ambient-shadow flex flex-col">
-              <div className="flex items-center justify-center">
-                <div className="text-center py-12">
-                  <span className="material-symbols-outlined text-6xl text-on-surface-variant mb-4">
-                    sync
-                  </span>
-                  <p className="font-body text-on-surface-variant">
-                    Click "Sync Now" to fetch latest changes
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {history.length > 0 && <SyncHistory events={history} />}
-        </motion.div>
-      )
-    }
-
-    if (viewMode === "resolve") {
-      return (
-        <motion.div
-          key="resolve"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          {isLoading && <LoadingSpinner message="Fetching sync data..." />}
-
-          {!isLoading && (
-            <ConflictResolution
-              changes={changes}
-              onResolve={(changeId, resolution, customValue) =>
-                resolveChange(integration.id, changeId, resolution, customValue)
-              }
-            />
-          )}
-        </motion.div>
-      )
-    }
   }
 
   const showBottomBar = viewMode === "resolve" && !isLoading
@@ -239,8 +159,7 @@ export function IntegrationDetail() {
             <button
               onClick={handleSyncNow}
               disabled={syncMutation.isPending}
-              className="px-8 py-3.5 rounded-xl font-headline text-base font-bold shadow-lg shadow-on-tertiary-container/20 hover:shadow-on-tertiary-container/30 hover:-translate-y-0.5 transition-all flex items-center gap-2.5 disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{ backgroundColor: "#0D85FF", color: "white" }}
+              className="px-8 py-3.5 rounded-xl font-headline text-base font-bold shadow-lg shadow-on-tertiary-container/20 hover:shadow-on-tertiary-container/30 hover:-translate-y-0.5 transition-all flex items-center gap-2.5 disabled:opacity-50 disabled:cursor-not-allowed bg-primary text-on-primary"
             >
               <span
                 className={`material-symbols-outlined text-[24px] ${syncMutation.isPending ? "animate-spin" : ""}`}
@@ -253,7 +172,30 @@ export function IntegrationDetail() {
         </div>
       </div>
 
-      <AnimatePresence mode="wait">{renderContent()}</AnimatePresence>
+      <AnimatePresence mode="wait">
+        {viewMode === "overview" ? (
+          <OverviewView
+            key="overview"
+            error={error}
+            history={history}
+            onRetry={() =>
+              syncMutation.mutate({
+                integrationId: integration.id,
+                applicationId: integration.application_id,
+              })
+            }
+          />
+        ) : (
+          <ResolveView
+            key="resolve"
+            isLoading={isLoading}
+            changes={changes}
+            onResolve={(changeId, resolution, customValue) =>
+              resolveChange(integration.id, changeId, resolution, customValue)
+            }
+          />
+        )}
+      </AnimatePresence>
 
       {showBottomBar && (
         <div className="fixed bottom-0 left-0 md:left-64 right-0 z-50 bg-surface border-t border-outline-variant">
@@ -261,9 +203,7 @@ export function IntegrationDetail() {
             <div className="flex items-center gap-2 flex-1">
               <BulkResolutionActions
                 onKeepLocal={() => bulkResolve(integration.id, "keep_current")}
-                onAcceptExternal={() =>
-                  bulkResolve(integration.id, "accept_new")
-                }
+                onAcceptExternal={() => bulkResolve(integration.id, "accept_new")}
                 onReset={() => resetResolutions(integration.id)}
               />
             </div>
@@ -288,5 +228,63 @@ export function IntegrationDetail() {
         </div>
       )}
     </div>
+  )
+}
+
+interface OverviewViewProps {
+  error: ReturnType<typeof useSyncDataFor>["error"]
+  history: ReturnType<typeof useHistoryFor>
+  onRetry: () => void
+}
+
+function OverviewView({ error, history, onRetry }: OverviewViewProps) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="flex flex-col gap-6"
+    >
+      {error ? (
+        <ErrorMessage error={error} onRetry={onRetry} />
+      ) : (
+        <div className="bg-surface-container-lowest rounded-2xl p-6 ambient-shadow flex flex-col">
+          <div className="flex items-center justify-center">
+            <div className="text-center py-12">
+              <span className="material-symbols-outlined text-6xl text-on-surface-variant mb-4">
+                sync
+              </span>
+              <p className="font-body text-on-surface-variant">
+                Click "Sync Now" to fetch latest changes
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {history.length > 0 && <SyncHistory events={history} />}
+    </motion.div>
+  )
+}
+
+interface ResolveViewProps {
+  isLoading: boolean
+  changes: ReturnType<typeof useSyncDataFor>["changes"]
+  onResolve: React.ComponentProps<typeof ConflictResolution>["onResolve"]
+}
+
+function ResolveView({ isLoading, changes, onResolve }: ResolveViewProps) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      {isLoading ? (
+        <LoadingSpinner message="Fetching sync data..." />
+      ) : (
+        <ConflictResolution changes={changes} onResolve={onResolve} />
+      )}
+    </motion.div>
   )
 }

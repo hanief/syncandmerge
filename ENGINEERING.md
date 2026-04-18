@@ -108,30 +108,30 @@
 
 ## Frontend Standards
 
-Comprehensive Type Safety: Define explicit interfaces or types for all component props, state, and function parameters, strictly prohibiting the use of any to ensure the compiler catches potential runtime errors before deployment.
+- Comprehensive Type Safety: Define explicit interfaces or types for all component props, state, and function parameters, strictly prohibiting the use of any to ensure the compiler catches potential runtime errors before deployment.
 
-Functional Components and Hooks: Prioritize functional components over class-based structures and utilize the standard Hooks API (useState, useEffect, useContext) to manage component lifecycles and state in a predictable, modern manner.
+- Functional Components and Hooks: Prioritize functional components over class-based structures and utilize the standard Hooks API (useState, useEffect, useContext) to manage component lifecycles and state in a predictable, modern manner.
 
-Component Composition: Build complex user interfaces by nesting small, single-purpose components and utilizing the children prop, which reduces deep "prop drilling" and makes the UI more flexible and reusable.
+- Component Composition: Build complex user interfaces by nesting small, single-purpose components and utilizing the children prop, which reduces deep "prop drilling" and makes the UI more flexible and reusable.
 
-Custom Hooks for Logic Reuse: Extract complex or repetitive logic—such as API interactions, form management, or browser event listeners—into custom hooks to decouple business logic from UI representation and adhere to the DRY principle.
+- Custom Hooks for Logic Reuse: Extract complex or repetitive logic—such as API interactions, form management, or browser event listeners—into custom hooks to decouple business logic from UI representation and adhere to the DRY principle.
 
-State Management Strategy: Use local useState for UI-only state and implement specialized libraries like Zustand or TanStack Query for global or server-synchronized data to maintain a clear and predictable data flow.
+- State Management Strategy: Use local useState for UI-only state and implement specialized libraries like Zustand or TanStack Query for global or server-synchronized data to maintain a clear and predictable data flow.
 
-Server State Synchronization: Leverage tools like React Query or SWR to handle caching, background synchronization, and loading/error states, effectively moving complex data-fetching logic out of the component’s useEffect blocks.
+- Server State Synchronization: Leverage tools like React Query or SWR to handle caching, background synchronization, and loading/error states, effectively moving complex data-fetching logic out of the component’s useEffect blocks.
 
-Strategic Performance Optimization: Apply React.memo, useCallback, and useMemo judiciously to prevent expensive re-renders in complex component trees, while avoiding premature optimization in simpler parts of the application.
+- Strategic Performance Optimization: Apply React.memo, useCallback, and useMemo judiciously to prevent expensive re-renders in complex component trees, while avoiding premature optimization in simpler parts of the application.
 
-Testing and Quality Assurance: Implement unit tests for business logic and integration tests for component behavior using Vitest/Jest and React Testing Library to verify that the UI functions correctly from the user's perspective.
+- Testing and Quality Assurance: Implement unit tests for business logic and integration tests for component behavior using Vitest/Jest and React Testing Library to verify that the UI functions correctly from the user's perspective.
 
-Accessibility (a11y) Integration: Utilize semantic HTML elements (e.g., <nav>, <main>, <button>) and appropriate ARIA attributes to ensure the application is fully navigable and usable for individuals using assistive technologies.
+- Accessibility (a11y) Integration: Utilize semantic HTML elements (e.g., <nav>, <main>, <button>) and appropriate ARIA attributes to ensure the application is fully navigable and usable for individuals using assistive technologies.
 
-Robust Error Handling: Wrap critical component trees in Error Boundaries to catch unexpected JavaScript errors, preventing the entire application from crashing and providing a graceful fallback UI to the user.
+- Robust Error Handling: Wrap critical component trees in Error Boundaries to catch unexpected JavaScript errors, preventing the entire application from crashing and providing a graceful fallback UI to the user.
 
-Discriminated Unions for Complex State: Use TypeScript’s discriminated unions to model state that can exist in multiple distinct modes (e.g., Loading, Success, Error), ensuring that data properties are only accessible when the state is valid.
+- Discriminated Unions for Complex State: Use TypeScript’s discriminated unions to model state that can exist in multiple distinct modes (e.g., Loading, Success, Error), ensuring that data properties are only accessible when the state is valid.
 
-Consistent File and Folder Structure: Organize the codebase by feature or domain (e.g., a features/ directory containing related components, hooks, and types) to improve discoverability and scalability as the project grows.
+- Consistent File and Folder Structure: Organize the codebase by feature or domain (e.g., a features/ directory containing related components, hooks, and types) to improve discoverability and scalability as the project grows.
 
-Security Best Practices: Sanitize all user-generated content and avoid using dangerouslySetInnerHTML to protect the application against Cross-Site Scripting (XSS) and other common web vulnerabilities.
+- Security Best Practices: Sanitize all user-generated content and avoid using dangerouslySetInnerHTML to protect the application against Cross-Site Scripting (XSS) and other common web vulnerabilities.
 
-Prop Naming Conventions: Maintain a consistent naming standard, such as prefixing event handler props with on (e.g., onSelect) and the internal implementation functions with handle (e.g., handleSelect), to improve code readability.
+- Prop Naming Conventions: Maintain a consistent naming standard, such as prefixing event handler props with on (e.g., onSelect) and the internal implementation functions with handle (e.g., handleSelect), to improve code readability.

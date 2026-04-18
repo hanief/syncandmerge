@@ -9,7 +9,7 @@ export function TopBar() {
 
       <div className="flex items-center gap-4">
         <button
-          aria-label="notifications"
+          aria-label="Notifications"
           className="w-10 h-10 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors"
         >
           <span className="material-symbols-outlined text-[20px]">
@@ -18,7 +18,7 @@ export function TopBar() {
         </button>
 
         <button
-          aria-label="help"
+          aria-label="Help"
           className="w-10 h-10 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors"
         >
           <span className="material-symbols-outlined text-[20px]">help</span>

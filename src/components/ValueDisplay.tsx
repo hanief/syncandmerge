@@ -19,11 +19,11 @@ export function ValueDisplay({
   if (changeType === "ADD") {
     if (resolution === "accept_new") {
       return (
-        <div className="bg-[#eef8f3] border border-[#22c55e]/30 rounded-lg p-2.5">
-          <p className="font-label text-[10px] font-semibold text-[#1e6041] uppercase tracking-wide mb-1">
+        <div className="bg-success-container border border-success/30 rounded-lg p-2.5">
+          <p className="font-label text-[10px] font-semibold text-on-success-container uppercase tracking-wide mb-1">
             New value added
           </p>
-          <p className="font-body text-xs text-[#1e6041] font-medium wrap-break-word">
+          <p className="font-body text-xs text-on-success-container font-medium wrap-break-word">
             {renderSyncValue(newValue)}
           </p>
         </div>
@@ -104,14 +104,14 @@ export function ValueDisplay({
       <div
         className={`rounded-lg p-2.5 ${
           resolution === "accept_new"
-            ? "bg-[#eef8f3] border border-[#22c55e]/30"
+            ? "bg-success-container border border-success/30"
             : "bg-surface-container-highest"
         }`}
       >
         <p
           className={`font-label text-[10px] font-semibold uppercase tracking-wide mb-1 ${
             resolution === "accept_new"
-              ? "text-[#1e6041]"
+              ? "text-on-success-container"
               : "text-on-surface-variant"
           }`}
         >
@@ -120,7 +120,7 @@ export function ValueDisplay({
         <p
           className={`font-body text-xs wrap-break-word ${
             resolution === "accept_new"
-              ? "text-[#1e6041] font-medium"
+              ? "text-on-success-container font-medium"
               : "text-on-surface"
           }`}
         >

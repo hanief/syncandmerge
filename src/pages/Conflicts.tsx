@@ -1,7 +1,10 @@
 import { useNavigate } from "react-router-dom"
 import { useSyncStore } from "../stores/syncStore"
 import { useToast } from "../hooks/useToast"
-import { useConflictActions } from "../hooks/useConflictActions"
+import {
+  useApplyConflicts,
+  useConflictStats,
+} from "../hooks/useConflictActions"
 import { Toast } from "../components/Toast"
 import { ConflictResolution } from "../components/ConflictResolution"
 import { BulkResolutionActions } from "../components/BulkResolutionActions"
@@ -17,14 +20,9 @@ export function Conflicts() {
     resetResolutionsAll,
   } = useSyncStore()
 
-  const {
-    conflictGroups,
-    totalChanges,
-    totalResolved,
-    allResolved,
-    applyIntegration,
-    applyAll,
-  } = useConflictActions({
+  const { conflictGroups, totalChanges, totalResolved, allResolved } =
+    useConflictStats()
+  const { applyIntegration, applyAll } = useApplyConflicts({
     onSuccess: (msg) => showToast(msg, "success"),
     onWarning: (msg) => showToast(msg, "warning"),
   })

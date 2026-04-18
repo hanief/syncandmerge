@@ -1,6 +1,7 @@
 import { formatFieldName } from "../utils/format"
 import { CHANGE_STYLES } from "../constants/changeStyles"
 import { ValueDisplay } from "./ValueDisplay"
+import { MaterialIcon } from "./MaterialIcon"
 import type { SyncChangeResolution } from "../types"
 
 interface ResolutionRowProps {
@@ -13,12 +14,7 @@ export function ResolutionRow({ resolution }: ResolutionRowProps) {
   return (
     <div className="bg-surface-container-low rounded-xl p-4 border border-outline-variant/15">
       <div className="flex items-center gap-2 mb-3 flex-wrap">
-        <span
-          className={`material-symbols-outlined text-[16px] ${changeStyle.icon}`}
-          style={{ fontVariationSettings: "'FILL' 1" }}
-        >
-          {changeStyle.iconName}
-        </span>
+        <MaterialIcon name={changeStyle.iconName} filled className={`text-[16px] ${changeStyle.icon}`} />
         <span className="font-label text-sm font-bold text-on-surface flex-1">
           {formatFieldName(resolution.field_name)}
         </span>

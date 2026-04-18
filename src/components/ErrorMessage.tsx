@@ -1,4 +1,5 @@
 import type { ApiError } from '../types';
+import { MaterialIcon } from './MaterialIcon';
 
 interface ErrorMessageProps {
   error: ApiError | Error | string;
@@ -31,6 +32,12 @@ const API_ERROR_PRESENTATIONS: Record<ApiError['type'], Omit<ErrorPresentation, 
     title: 'Integration Unavailable',
     description: 'The external service is not responding. Its server may be down or unreachable.',
     hint: 'Check the integration provider\'s status page. Try again in a few minutes once the service is back up.',
+  },
+  timeout: {
+    icon: 'schedule',
+    title: 'Request Timed Out',
+    description: 'The server took too long to respond.',
+    hint: 'This is usually temporary. Wait a moment, then try again.',
   },
   network_error: {
     icon: 'signal_wifi_off',
@@ -68,12 +75,7 @@ export function ErrorMessage({ error, onRetry }: ErrorMessageProps) {
   return (
     <div className="bg-error-container rounded-2xl p-6 border-l-4 border-error">
       <div className="flex items-start gap-4">
-        <span
-          className="material-symbols-outlined text-error text-3xl shrink-0 mt-0.5"
-          style={{ fontVariationSettings: "'FILL' 1" }}
-        >
-          {icon}
-        </span>
+        <MaterialIcon name={icon} filled className="text-error text-3xl shrink-0 mt-0.5" />
         <div className="flex-1">
           <h3 className="font-headline text-base font-bold text-on-error-container mb-1">
             {title}
