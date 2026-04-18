@@ -4,6 +4,10 @@ A frontend interface for managing bidirectional data synchronization across exte
 
 ---
 
+## Demo
+
+[https://syncandmerge.utama.app](https://syncandmerge.utama.app/)
+
 ## Quick Start
 
 ### Docker Compose (Recommended)
@@ -17,6 +21,7 @@ docker-compose up prod --build   # production
 - Production: `http://localhost:8080`
 
 > **Note:** On first run or after dependency changes, use `--build`. If you see missing module errors, clear stale volumes first:
+>
 > ```bash
 > docker-compose down -v
 > docker-compose up dev --build
@@ -25,23 +30,28 @@ docker-compose up prod --build   # production
 ### Docker (manual)
 
 **Development:**
+
 ```bash
 docker build -f Dockerfile.dev -t sync-and-merge-dev .
 docker run -p 5173:5173 -v $(pwd):/app -v /app/node_modules sync-and-merge-dev
 ```
 
 **Production:**
+
 ```bash
 docker build -t sync-and-merge .
 docker run -p 8080:80 sync-and-merge
 ```
 
 ### Local
+
 If you have node/npm installed locally:
+
 ```bash
 npm install
 npm run dev
 ```
+
 Visit `http://localhost:5173`
 
 ---
