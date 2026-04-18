@@ -10,6 +10,10 @@
 
 ## Do this
 - Always refer to official documentation on how to use a technology
+- Clean architecture and code quality
+- Loading and error state handling
+- UX for sync flow and conflict resolution
+- Readability and consistency — visual polish is secondary
 
 ## Engineering Principles
 1. DRY (Don't Repeat Yourself)
