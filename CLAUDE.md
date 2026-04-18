@@ -1,4 +1,4 @@
-# Project: Portier – Web App Integration Sync Panel
+# Project: Sync and Merge – Web App Integration Sync Panel
 
 ## What This Is
 A B2B SaaS frontend for managing bidirectional data sync between a platform and external services (Salesforce, HubSpot, Stripe, Slack, Zendesk, Intercom). Focus is on conflict detection, resolution, and sync history.
@@ -12,7 +12,7 @@ A B2B SaaS frontend for managing bidirectional data sync between a platform and 
 Use @PRD.md for detailed product requirements
 
 ## API
-- Endpoint: `https://portier-takehometest.onrender.com/api/v1/data/sync?application_id={salesforce,hubspot,stripe,slack,zendesk,intercom}`
+- Endpoint: `{API_BASE_URL}/data/sync?application_id={salesforce,hubspot,stripe,slack,zendesk,intercom}`
 - Only the **Sync Now** button calls this API. All other data is mocked/simulated.
 - Handle errors: 4xx (missing config), 500 (server error), 502 (gateway/integration down)
 

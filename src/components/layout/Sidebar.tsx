@@ -24,7 +24,7 @@ export function Sidebar() {
         </div>
         <div>
           <h2 className="font-headline font-black text-on-surface tracking-tight leading-tight text-lg">
-            Portier
+            Acme, Inc.
           </h2>
           <p className="font-label text-xs font-medium text-on-surface-variant">
             Enterprise
